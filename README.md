@@ -24,16 +24,16 @@ grunt coretest
 
 To publish a new package (publish cjs first then amd)
 cjs>
-     grunt corecjs
-     Please ensure unit tests pass
-   cd cjs
-    update version in package.json (version number even for cjs)
-   npm pack
-   npm publish --tag cjs
+     grunt corecjs  
+     Please ensure unit tests pass  
+   cd cjs  
+    update version in package.json (version number even for cjs)  
+   npm pack  
+   npm publish --tag cjs  
 
-amd> grunt core
-     Please ensure unit tests pass
-   cd amd
-    update version in package.json (version number odd for amd)
-   npm pack
-   npm publish --tag amd
+amd> grunt core  
+     Please ensure unit tests pass  
+   cd amd  
+    update version in package.json (version number odd for amd)  
+   npm pack  
+   npm publish --tag amd  
