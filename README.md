@@ -12,3 +12,28 @@ provided by the bot. You will only need to do this once across all repos using o
 This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
 For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
 contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
+
+
+To build:
+npm install
+amd> grunt core
+cjs> grunt corecjs
+
+To run unit tests:
+grunt coretest
+
+To publish a new package (publish cjs first then amd)
+cjs>
+     grunt corecjs
+     Please ensure unit tests pass
+   cd cjs
+    update version in package.json (version number even for cjs)
+   npm pack
+   npm publish --tag cjs
+
+amd> grunt core
+     Please ensure unit tests pass
+   cd amd
+    update version in package.json (version number odd for amd)
+   npm pack
+   npm publish --tag amd
