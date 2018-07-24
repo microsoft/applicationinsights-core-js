@@ -89,6 +89,10 @@ export class AppInsightsCore implements IAppInsightsCore {
             throw Error("Invalid telemetry item");
         }
 
+        if (telemetryItem.data.baseData && !telemetryItem.data.baseType) {
+            throw Error("Provide data.baseType for data.baseData");
+        }
+
         // do base validation before sending it through the pipeline        
         this._validateTelmetryItem(telemetryItem);
         if (!telemetryItem.instrumentationKey) {
@@ -105,17 +109,6 @@ export class AppInsightsCore implements IAppInsightsCore {
                 break;
             }
 
-            i++;
-        }
-    }
-
-    flush(async?: boolean, callBack?: () => void) {
-        let i = 0;
-        while (i < this._extensions.length) {
-            let ext = (<IChannelControls>this._extensions[i]);
-            if (ext && ext.priority >= MinChannelPriorty) {
-                ext.flush(async, callBack);
-            }
             i++;
         }
     }

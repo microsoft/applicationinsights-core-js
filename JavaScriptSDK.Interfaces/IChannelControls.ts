@@ -24,7 +24,7 @@ export interface IChannelControls extends ITelemetryPlugin {
 
     /**
      * Flush to send data immediately
-     * @param async: send data synchronously when true
+     * @param async: send data asynchronously when true
      * @param callBack: if specified, notify caller when send is complete 
      */
     flush(async?: boolean, callBack?: () => void): void;
