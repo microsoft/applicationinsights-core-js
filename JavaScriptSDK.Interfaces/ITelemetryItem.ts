@@ -25,20 +25,12 @@ export interface ITelemetryItem {
     ctx?: {};
 
     tags?: Tags[];
-    /**
-     * Telemetry properties pertaining to domain about which data is being captured. Example, duration, referrerUri for browser page
-     * This is standard set by domain
-     */
+
     data?: {
         baseType?: string;
         baseData?: { [key: string]: any };
         [key: string]: any;
     }
-
-    /**
-     * Custom properties to be captured about the telemetry item
-     */
-    customProperties?: { [key: string]: any };
 }
 
 export interface Tags {
