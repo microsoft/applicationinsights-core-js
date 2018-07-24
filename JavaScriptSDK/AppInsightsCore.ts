@@ -8,6 +8,7 @@ import { CoreUtils } from "./CoreUtils";
 "use strict";
 
 export class AppInsightsCore implements IAppInsightsCore {
+
     public config: IConfiguration;
     public static defaultConfig: IConfiguration;
 
@@ -88,6 +89,10 @@ export class AppInsightsCore implements IAppInsightsCore {
             throw Error("Invalid telemetry item");
         }
 
+        if (telemetryItem.data.baseData && !telemetryItem.data.baseType) {
+            throw Error("Provide data.baseType for data.baseData");
+        }
+
         // do base validation before sending it through the pipeline        
         this._validateTelmetryItem(telemetryItem);
         if (!telemetryItem.instrumentationKey) {
@@ -116,10 +121,6 @@ export class AppInsightsCore implements IAppInsightsCore {
 
         if (CoreUtils.isNullOrUndefined(telemetryItem.timestamp)) {
             throw Error("telemetry timestamp required");
-        }
-
-        if (CoreUtils.isNullOrUndefined(telemetryItem.baseType)) {
-            throw Error("telemetry baseType required");
         }
 
         if (CoreUtils.isNullOrUndefined(telemetryItem.instrumentationKey)) {

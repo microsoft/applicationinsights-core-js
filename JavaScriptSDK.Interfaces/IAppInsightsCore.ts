@@ -25,5 +25,5 @@ export interface IAppInsightsCore {
     /*
     * Core track API
     */
-    track(telemetryItem: ITelemetryItem);
+    track(telemetryItem: ITelemetryItem): void;
 }
