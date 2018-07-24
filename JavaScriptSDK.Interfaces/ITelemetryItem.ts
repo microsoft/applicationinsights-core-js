@@ -22,7 +22,7 @@ export interface ITelemetryItem {
     /**
      * System context properties of the telemetry item, example: ip address, city etc
      */ 
-    ctx?: {};
+    ctx?: {[key: string]: any};
 
     tags?: Tags[];
 
