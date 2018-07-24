@@ -4,6 +4,7 @@
 
 import { IConfiguration, ITelemetryPlugin, ITelemetryItem } from "../../applicationinsights-core-js"
 import { AppInsightsCore } from "../../JavaScriptSDK/AppInsightsCore";
+import { IChannelControls } from "../../JavaScriptSDK.Interfaces/IChannelControls";
 
 export class ApplicationInsightsCoreTests extends TestClass {
 
@@ -50,7 +51,7 @@ export class ApplicationInsightsCoreTests extends TestClass {
                 let samplingPlugin = new TestSamplingPlugin();
                 samplingPlugin.priority = 20;
 
-                let channelPlugin = new TestSamplingPlugin();
+                let channelPlugin = new ChannelPlugin();
                 channelPlugin.priority = 120;
                 // Assert prior to initialize
                 Assert.ok(!samplingPlugin.nexttPlugin, "Not setup prior to pipeline initialization");
@@ -59,7 +60,23 @@ export class ApplicationInsightsCoreTests extends TestClass {
                 appInsightsCore.initialize(
                     {instrumentationKey: "09465199-12AA-4124-817F-544738CC7C41"}, 
                     [samplingPlugin, channelPlugin]);
-                Assert.ok(!!samplingPlugin.nexttPlugin, "Not setup prior to pipeline initialization");
+                Assert.ok(!!samplingPlugin.nexttPlugin, "setup prior to pipeline initialization");
+            }
+        });
+
+        this.testCase({
+            name: "ApplicationInsightsCore: flush clears channel buffer",
+            test: () => {
+                let channelPlugin = new ChannelPlugin();
+                let appInsightsCore = new AppInsightsCore();
+                appInsightsCore.initialize(
+                    {instrumentationKey: "09465199-12AA-4124-817F-544738CC7C41"}, 
+                    [channelPlugin]);
+                
+                Assert.ok(!channelPlugin.isFlushInvoked, "Flush not called on initialize");
+                appInsightsCore.flush(true);
+
+                Assert.ok(channelPlugin.isFlushInvoked, "Flush triggered for channel");
             }
         });
     }
@@ -85,10 +102,6 @@ class TestSamplingPlugin implements ITelemetryPlugin {
         if (!env) {
             throw Error("Invalid telemetry object");
         }
-
-        if (!env.domainProperties) {
-            throw Error("Need domain properties specified");
-        }
     }
 
     private _start(config: IConfiguration) {
@@ -102,5 +115,51 @@ class TestSamplingPlugin implements ITelemetryPlugin {
 
     private _setNextPlugin(next: ITelemetryPlugin) : void {
         this.nexttPlugin = next;
+    }
+}
+
+class ChannelPlugin implements IChannelControls {
+
+    public isFlushInvoked = false;
+    public isTearDownInvoked = false;
+    public isResumeInvoked = false;
+    public isPauseInvoked = false;
+
+    constructor() {
+        this.processTelemetry = this._processTelemetry.bind(this);
+    }
+    public pause(): void {
+        this.isPauseInvoked = true;
+    }    
+    
+    public resume(): void {
+        this.isResumeInvoked = true;
+    }
+
+    public teardown(): void {
+        this.isTearDownInvoked = true;
+    }
+
+    flush(async?: boolean, callBack?: () => void): void {
+        this.isFlushInvoked = true;
+        if (callBack) {
+            callBack();
+        }
+    }
+
+    public processTelemetry;
+
+    public identifier = "Sender";
+    
+    setNextPlugin: (next: ITelemetryPlugin) => {
+    }
+
+    public priority: number = 101;
+
+    public initialize = (config: IConfiguration) => {
+    }
+
+    private _processTelemetry(env: ITelemetryItem) {
+
     }
 }

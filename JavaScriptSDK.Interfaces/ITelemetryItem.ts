@@ -15,11 +15,6 @@ export interface ITelemetryItem {
     timestamp: Date;
 
     /**
-     * Telemetry type
-     */ 
-    baseType : string;
-
-    /**
      * Identifier of the resource that uniquely identifies which resource data is sent to
      */ 
     instrumentationKey: string;
@@ -27,17 +22,25 @@ export interface ITelemetryItem {
     /**
      * System context properties of the telemetry item, example: ip address, city etc
      */ 
-    sytemProperties?: { [key: string]: any };
+    ctx?: {};
 
+    tags?: tags[];
     /**
      * Telemetry properties pertaining to domain about which data is being captured. Example, duration, referrerUri for browser page
      * This is standard set by domain
      */
-    domainProperties?: { [key: string]: any };
-
+    data?: {
+        baseType?: string;
+        baseData?: { [key: string]: any };
+        [key: string]: any;
+    }
 
     /**
      * Custom properties to be captured about the telemetry item
      */
     customProperties?: { [key: string]: any };
+}
+
+export interface tags {
+    [key: string]: any;
 }

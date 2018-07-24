@@ -8,6 +8,7 @@ import { CoreUtils } from "./CoreUtils";
 "use strict";
 
 export class AppInsightsCore implements IAppInsightsCore {
+
     public config: IConfiguration;
     public static defaultConfig: IConfiguration;
 
@@ -108,6 +109,17 @@ export class AppInsightsCore implements IAppInsightsCore {
         }
     }
 
+    flush(async?: boolean, callBack?: () => void) {
+        let i = 0;
+        while (i < this._extensions.length) {
+            let ext = (<IChannelControls>this._extensions[i]);
+            if (ext && ext.priority >= MinChannelPriorty) {
+                ext.flush(async, callBack);
+            }
+            i++;
+        }
+    }
+
     private _validateTelmetryItem(telemetryItem: ITelemetryItem) {
 
         if (CoreUtils.isNullOrUndefined(telemetryItem.name)) {
@@ -116,10 +128,6 @@ export class AppInsightsCore implements IAppInsightsCore {
 
         if (CoreUtils.isNullOrUndefined(telemetryItem.timestamp)) {
             throw Error("telemetry timestamp required");
-        }
-
-        if (CoreUtils.isNullOrUndefined(telemetryItem.baseType)) {
-            throw Error("telemetry baseType required");
         }
 
         if (CoreUtils.isNullOrUndefined(telemetryItem.instrumentationKey)) {
