@@ -28,9 +28,13 @@ export interface ITelemetryItem {
 
     data?: {
         baseType?: string;
-        baseData?: { [key: string]: any };
         [key: string]: any;
-    }
+    },
+
+    /**
+     * Based on schema for part B
+     */ 
+    baseData?: { [key: string]: any };
 }
 
 export interface Tags {
