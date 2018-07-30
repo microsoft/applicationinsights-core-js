@@ -27,14 +27,19 @@ export interface ITelemetryItem {
     tags?: Tags[];
 
     data?: {
-        baseType?: string;
         [key: string]: any;
     },
+
+    /**
+     * Telemetry type used for part B
+     */
+    baseType?: string;
 
     /**
      * Based on schema for part B
      */ 
     baseData?: { [key: string]: any };
+
 }
 
 export interface Tags {
