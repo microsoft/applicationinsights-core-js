@@ -89,7 +89,7 @@ export class AppInsightsCore implements IAppInsightsCore {
             throw Error("Invalid telemetry item");
         }
 
-        if (telemetryItem.data.baseData && !telemetryItem.data.baseType) {
+        if (telemetryItem.baseData && !telemetryItem.baseType) {
             throw Error("Provide data.baseType for data.baseData");
         }
 
