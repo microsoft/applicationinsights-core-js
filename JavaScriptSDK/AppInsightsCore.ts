@@ -125,9 +125,8 @@ export class AppInsightsCore implements IAppInsightsCore {
     }
 
     /**
-     * Adds a notification listener. The Aria SDK calls methods on the listener 
-     * when an appropriate notification is raised.
-     * @param {object} listener - An EVTNotificationListener object.
+     * Adds a notification listener. The SDK calls methods on the listener when an appropriate notification is raised.
+     * @param {INotificationListener} listener - An INotificationListener object.
      */
     addNotificationListener(listener: INotificationListener): void {
         this._notificationManager.addNotificationListener(listener);
@@ -135,7 +134,7 @@ export class AppInsightsCore implements IAppInsightsCore {
 
     /**
      * Removes all instances of the listener.
-     * @param {object} listener - EVTNotificationListener to remove.
+     * @param {INotificationListener} listener - INotificationListener to remove.
      */
     removeNotificationListener(listener: INotificationListener): void {
         this._notificationManager.removeNotificationListener(listener);
