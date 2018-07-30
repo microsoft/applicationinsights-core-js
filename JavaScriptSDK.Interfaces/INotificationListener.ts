@@ -5,9 +5,6 @@ import { ITelemetryItem } from "./ITelemetryItem";
 /**
  * An interface used for the notification listener.
  * @interface
- * @property {function} eventsSent     - [Optional] A function called when events are sent.
- * @property {function} eventsDropped  - [Optional] A function called when events are dropped.
- * @property {function} eventsRejected - [Optional] A function called when events are rejected.
  */
 export interface INotificationListener {
     /**
