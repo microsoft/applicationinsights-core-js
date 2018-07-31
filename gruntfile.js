@@ -20,16 +20,10 @@ module.exports = function (grunt) {
             core: {
                 tsconfig: './tsconfig.json',
                 src: [
-                    './JavaScriptSDK.Interfaces/IConfiguration.ts',
-                    './JavaScriptSDK.Interfaces/IChannelControls.ts',
-                    './JavaScriptSDK.Interfaces/ITelemetryPlugin.ts',
-                    './JavaScriptSDK.Interfaces/ITelemetryItem.ts',
-                    './JavaScriptSDK.Interfaces/IAppInsightsCore.ts',
-                    './JavaScriptSDK.Interfaces/CoreUtils.ts',
-                    './JavaScriptSDK/AppInsightsCore.ts',
+                    './JavaScriptSDK.Interfaces/*.ts',
+                    './JavaScriptSDK/*.ts',
                     './applicationinsights-core-js.ts'
-                ],
-                out: './amd/bundle/applicationinsights-core-js.js',
+                ]
             },
             types: {
                 tsconfig: './tsconfig.json',
