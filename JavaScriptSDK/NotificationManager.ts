@@ -41,28 +41,14 @@ export class NotificationManager {
 
     /**
      * Notification for events being dropped.
-     * @param {ITelemetryItem[]} events - The array of events that have been dropped.
-     * @param {number} reason             - The reason for which the SDK dropped the events. The EventsDroppedReason
+     * @param {ITelemetryItem[]} events - The array of events that have been discarded by the SDK.
+     * @param {number} reason           - The reason for which the SDK dropped the events. The EventsDiscardedReason
      * constant should be used to check the different values.
      */
-    eventsDropped(events: ITelemetryItem[], reason: number): void {
+    eventsDiscarded(events: ITelemetryItem[], reason: number): void {
         for (let i: number = 0; i < this.listeners.length; ++i) {
-            if (this.listeners[i].eventsDropped) {
-                setTimeout(() => this.listeners[i].eventsDropped(events, reason), 0);
-            }
-        }
-    }
-
-    /**
-     * Notification for events being rejected.
-     * @param {ITelemetryItem[]} events - The array of events that have been rejected.
-     * @param {number} reason             - The reason for which the SDK rejeceted the events. The EventsRejectedReason
-     * constant should be used to check the different values.
-     */
-    eventsRejected(events: ITelemetryItem[], reason: number): void {
-        for (let i: number = 0; i < this.listeners.length; ++i) {
-            if (this.listeners[i].eventsRejected) {
-                setTimeout(() => this.listeners[i].eventsRejected(events, reason), 0);
+            if (this.listeners[i].eventsDiscarded) {
+                setTimeout(() => this.listeners[i].eventsDiscarded(events, reason), 0);
             }
         }
     }

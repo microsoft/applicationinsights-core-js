@@ -4,7 +4,7 @@ import { ITelemetryPlugin, IPlugin } from "../JavaScriptSDK.Interfaces/ITelemetr
 import { IChannelControls, MinChannelPriorty } from "../JavaScriptSDK.Interfaces/IChannelControls";
 import { ITelemetryItem } from "../JavaScriptSDK.Interfaces/ITelemetryItem";
 import { INotificationListener } from "../JavaScriptSDK.Interfaces/INotificationListener";
-import { EventsRejectedReason } from "../JavaScriptSDK.Enums/EventsRejectedReason";
+import { EventsDiscardedReason } from "../JavaScriptSDK.Enums/EventsDiscardedReason";
 import { CoreUtils } from "./CoreUtils";
 import { NotificationManager } from "./NotificationManager";
 
@@ -159,6 +159,6 @@ export class AppInsightsCore implements IAppInsightsCore {
     }
 
     private _notifiyInvalidEvent(telemetryItem: ITelemetryItem): void {
-        this._notificationManager.eventsRejected([telemetryItem], EventsRejectedReason.InvalidEvent);
+        this._notificationManager.eventsDiscarded([telemetryItem], EventsDiscardedReason.InvalidEvent);
     }
 }

@@ -15,15 +15,8 @@ export interface INotificationListener {
     /**
      * [Optional] A function called when events are dropped.
      * @param {ITelemetryItem[]} events - The array of events that have been dropped.
-     * @param {number} reason           - The reason for dropping the events. The EventsDroppedReason
+     * @param {number} reason           - The reason for dropping the events. The EventsDiscardedReason
      * constant should be used to check the different values.
      */
-    eventsDropped?: (events: ITelemetryItem[], reason: number) => void;
-    /**
-     * [Optional] A function called when events are rejected by the SDK.
-     * @param {ITelemetryItem[]} events - The array of events that have been rejected.
-     * @param {number} reason           - The reason for dropping the events. The EventsRejectedReason
-     * constant should be used to check the different values.
-     */
-    eventsRejected?: (events: ITelemetryItem[], reason: number) => void;
+    eventsDiscarded?: (events: ITelemetryItem[], reason: number) => void;
 }
