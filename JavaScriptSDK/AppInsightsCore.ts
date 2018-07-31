@@ -3,7 +3,10 @@ import { IConfiguration } from "../JavaScriptSDK.Interfaces/IConfiguration";
 import { ITelemetryPlugin, IPlugin } from "../JavaScriptSDK.Interfaces/ITelemetryPlugin";
 import { IChannelControls, MinChannelPriorty } from "../JavaScriptSDK.Interfaces/IChannelControls";
 import { ITelemetryItem } from "../JavaScriptSDK.Interfaces/ITelemetryItem";
+import { INotificationListener } from "../JavaScriptSDK.Interfaces/INotificationListener";
+import { EventsDiscardedReason } from "../JavaScriptSDK.Enums/EventsDiscardedReason";
 import { CoreUtils } from "./CoreUtils";
+import { NotificationManager } from "./NotificationManager";
 
 "use strict";
 
@@ -13,23 +16,29 @@ export class AppInsightsCore implements IAppInsightsCore {
     public static defaultConfig: IConfiguration;
 
     private _extensions: Array<IPlugin>;
+    private _notificationManager: NotificationManager;
 
     constructor() {
         this._extensions = new Array<IPlugin>();
     }
 
     initialize(config: IConfiguration, extensions: IPlugin[]): void {
-        
+
         if (!extensions || extensions.length === 0) {
             // throw error
             throw Error("At least one extension channel is required");
         }
-        
+
         if (!config || CoreUtils.isNullOrUndefined(config.instrumentationKey)) {
             throw Error("Please provide instrumentation key");
         }
 
         this.config = config;
+
+        // add notification to the extensions in the config so other plugins can access it
+        this._notificationManager = new NotificationManager();
+        this.config.extensions = this.config.extensions ? this.config.extensions : {};
+        this.config.extensions.NotificationManager = this._notificationManager;
 
         // Initial validation
         extensions.forEach((extension: ITelemetryPlugin) => {
@@ -85,11 +94,13 @@ export class AppInsightsCore implements IAppInsightsCore {
 
     track(telemetryItem: ITelemetryItem) {
         if (telemetryItem === null) {
+            this._notifiyInvalidEvent(telemetryItem);
             // throw error
             throw Error("Invalid telemetry item");
         }
 
         if (telemetryItem.baseData && !telemetryItem.baseType) {
+            this._notifiyInvalidEvent(telemetryItem);
             throw Error("Provide data.baseType for data.baseData");
         }
 
@@ -113,18 +124,41 @@ export class AppInsightsCore implements IAppInsightsCore {
         }
     }
 
+    /**
+     * Adds a notification listener. The SDK calls methods on the listener when an appropriate notification is raised.
+     * @param {INotificationListener} listener - An INotificationListener object.
+     */
+    addNotificationListener(listener: INotificationListener): void {
+        this._notificationManager.addNotificationListener(listener);
+    }
+
+    /**
+     * Removes all instances of the listener.
+     * @param {INotificationListener} listener - INotificationListener to remove.
+     */
+    removeNotificationListener(listener: INotificationListener): void {
+        this._notificationManager.removeNotificationListener(listener);
+    }
+
     private _validateTelmetryItem(telemetryItem: ITelemetryItem) {
 
         if (CoreUtils.isNullOrUndefined(telemetryItem.name)) {
+            this._notifiyInvalidEvent(telemetryItem);
             throw Error("telemetry name required");
         }
 
         if (CoreUtils.isNullOrUndefined(telemetryItem.timestamp)) {
+            this._notifiyInvalidEvent(telemetryItem);
             throw Error("telemetry timestamp required");
         }
 
         if (CoreUtils.isNullOrUndefined(telemetryItem.instrumentationKey)) {
+            this._notifiyInvalidEvent(telemetryItem);
             throw Error("telemetry instrumentationKey required");
         }
+    }
+
+    private _notifiyInvalidEvent(telemetryItem: ITelemetryItem): void {
+        this._notificationManager.eventsDiscarded([telemetryItem], EventsDiscardedReason.InvalidEvent);
     }
 }
