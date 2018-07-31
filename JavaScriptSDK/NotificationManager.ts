@@ -40,9 +40,9 @@ export class NotificationManager {
     }
 
     /**
-     * Notification for events being dropped.
+     * Notification for events being discarded.
      * @param {ITelemetryItem[]} events - The array of events that have been discarded by the SDK.
-     * @param {number} reason           - The reason for which the SDK dropped the events. The EventsDiscardedReason
+     * @param {number} reason           - The reason for which the SDK discarded the events. The EventsDiscardedReason
      * constant should be used to check the different values.
      */
     eventsDiscarded(events: ITelemetryItem[], reason: number): void {
