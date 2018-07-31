@@ -4,8 +4,7 @@ export { ITelemetryPlugin, IPlugin } from "./JavaScriptSDK.Interfaces/ITelemetry
 export { IAppInsightsCore } from "./JavaScriptSDK.Interfaces/IAppInsightsCore";
 export { ITelemetryItem } from "./JavaScriptSDK.Interfaces/ITelemetryItem";
 export { INotificationListener } from "./JavaScriptSDK.Interfaces/INotificationListener";
-export { EventsDroppedReason } from "./JavaScriptSDK.Enums/EventsDroppedReason";
-export { EventsRejectedReason } from "./JavaScriptSDK.Enums/EventsRejectedReason";
+export { EventsDiscardedReason } from "./JavaScriptSDK.Enums/EventsDiscardedReason";
 export { AppInsightsCore } from "./JavaScriptSDK/AppInsightsCore";
 export { CoreUtils } from "./JavaScriptSDK/CoreUtils";
 export { NotificationManager } from "./JavaScriptSDK/NotificationManager";
