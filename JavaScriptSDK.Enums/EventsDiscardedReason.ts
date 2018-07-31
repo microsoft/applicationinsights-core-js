@@ -1,5 +1,5 @@
 /**
- * The EventsDiscardedReason enumeration contains a set of values that specify the reason for dropping an event.
+ * The EventsDiscardedReason enumeration contains a set of values that specify the reason for discarding an event.
  */
 export const EventsDiscardedReason = {
     /**
