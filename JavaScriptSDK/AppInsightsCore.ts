@@ -126,6 +126,8 @@ export class AppInsightsCore implements IAppInsightsCore {
 
     /**
      * Adds a notification listener. The SDK calls methods on the listener when an appropriate notification is raised.
+     * The added plugins must raise notifications. If the plugins do not implement the notifications, then no methods will be
+     * called.
      * @param {INotificationListener} listener - An INotificationListener object.
      */
     addNotificationListener(listener: INotificationListener): void {
