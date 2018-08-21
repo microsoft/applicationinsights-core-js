@@ -1,5 +1,12 @@
 module.exports = function (grunt) {
     grunt.initConfig({
+        options: {
+            force: true
+        },
+        clean: {
+            core: ['./amd/bundle/**', './JavaScriptSDK.Tests/Selenium/aicore.tests*'],
+            corecjs: ['./cjs/bundle/**', './JavaScriptSDK.Tests/Selenium/aicore.tests*']
+        },
         ts: {
             options: {
                 comments: true
@@ -53,6 +60,7 @@ module.exports = function (grunt) {
         grunt.log.ok('Running test: ' + name);
     });
 
+    grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks("grunt-ts");
     grunt.loadNpmTasks('grunt-contrib-qunit');
     grunt.registerTask("core", ["ts:core"]);
