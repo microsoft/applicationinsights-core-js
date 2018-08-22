@@ -25,57 +25,13 @@ module.exports = function (grunt) {
                     './applicationinsights-core-js.ts'
                 ]
             },
-            types: {
-                tsconfig: './tsconfig.json',
-                src: [
-                    'JavaScript/JavaScriptSDK.Tests/DefinitionTypes/*.ts'
-                ],
-                out: 'bundle/test/ai.types.js'
-            },
-            test: {
-                tsconfig: './tsconfig.json',
-                src: [
-                    'JavaScript/JavaScriptSDK.Tests/Selenium/*.ts'
-                ],
-                out: 'JavaScript/JavaScriptSDK.Tests/Selenium/ai.tests.js'
-            },
-            testSchema: {
-                tsconfig: './tsconfig.json',
-                src: [
-                    'JavaScript/JavaScriptSDK.Tests/Contracts/Generated/*.ts'
-                ],
-                out: 'bundle/test/ai.schema.tests.js'
-            },
             coretest: {
-                tsconfig: './tsconfig.json',
+                tsconfig: './JavaScriptSDK.Tests/tsconfig.json',
                 src: [
                     './JavaScriptSDK.Tests/Selenium/ApplicationInsightsCore.Tests.ts',
 		            './JavaScriptSDK.Tests/Selenium/aitests.ts'
                 ],
                 out: './JavaScriptSDK.Tests/Selenium/aicore.tests.js'
-            }
-        },
-        uglify: {
-            ai: {
-                files: {
-                    'bundle/ai.0.js': ['bundle/ai.js'],
-                },
-                options: {
-                    sourceMap: true,
-                    sourceMapIncludeSources: true,
-                    sourceMapIn: 'bundle/ai.js.map',
-                    compress: {
-                        ie8: true
-                    },
-                    mangle: {
-                        ie8: true
-                    }
-                },
-            },
-            snippet: {
-                files: {
-                    'bundle/snippet/snippet.min.js': ['JavaScript/JavaScriptSDK/snippet.js']
-                }
             }
         },
         qunit: {
@@ -98,7 +54,6 @@ module.exports = function (grunt) {
     });
 
     grunt.loadNpmTasks("grunt-ts");
-    grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-qunit');
     grunt.registerTask("core", ["ts:core"]);
     grunt.registerTask("corecjs", ["ts:corecjs"])
