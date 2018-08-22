@@ -108,6 +108,10 @@ export class AppInsightsCore implements IAppInsightsCore {
             // setup default ikey if not passed in
             telemetryItem.instrumentationKey = this.config.instrumentationKey;
         }
+        if(!telemetryItem.timestamp) {
+            // add default timestamp if not passed in
+            telemetryItem.timestamp = new Date();
+        }
 
         // do basic validation before sending it through the pipeline
         this._validateTelmetryItem(telemetryItem);

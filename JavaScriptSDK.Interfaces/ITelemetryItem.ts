@@ -12,12 +12,12 @@ export interface ITelemetryItem {
     /**
      * Timestamp when item was sent
      */ 
-    timestamp: Date;
+    timestamp?: Date;
 
     /**
      * Identifier of the resource that uniquely identifies which resource data is sent to
      */ 
-    instrumentationKey: string;
+    instrumentationKey?: string;
 
     /**
      * System context properties of the telemetry item, example: ip address, city etc
