@@ -42,6 +42,16 @@ export class ApplicationInsightsCoreTests extends TestClass {
                 } catch (error) {
                     Assert.ok(true, "Validates extensions are provided");                    
                 }
+                let config : IConfiguration = {
+                    endpointUrl: "https://dc.services.visualstudio.com/v2/track",
+                    instrumentationKey: "",
+                    extensions: {}
+                };
+                try {                    
+                    appInsightsCore.initialize(config, [samplingPlugin]);
+                } catch (error) {
+                    Assert.ok(true, "Validates instrumentationKey");                    
+                }
             }
         });
 

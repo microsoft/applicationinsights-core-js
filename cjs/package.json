@@ -1,6 +1,6 @@
 {
     "name": "applicationinsights-core-js",
-    "version": "0.0.62",
+    "version": "0.0.64",
     "description": "Microsoft Application Insights Core Javascript SDK",
     "devDependencies": {
         "grunt": "1.0.1",

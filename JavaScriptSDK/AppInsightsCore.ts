@@ -104,15 +104,15 @@ export class AppInsightsCore implements IAppInsightsCore {
             throw Error("Provide data.baseType for data.baseData");
         }
 
-        // do base validation before sending it through the pipeline        
-        this._validateTelmetryItem(telemetryItem);
         if (!telemetryItem.instrumentationKey) {
             // setup default ikey if not passed in
             telemetryItem.instrumentationKey = this.config.instrumentationKey;
         }
 
-        // invoke any common telemetry processors before sending through pipeline
+        // do basic validation before sending it through the pipeline
+        this._validateTelmetryItem(telemetryItem);
 
+        // invoke any common telemetry processors before sending through pipeline
         let i = 0;
         while (i < this._extensions.length) {
             if ((<any>this._extensions[i]).processTelemetry) {
