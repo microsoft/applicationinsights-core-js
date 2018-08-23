@@ -1,11 +1,13 @@
 module.exports = function (grunt) {
     grunt.initConfig({
         options: {
-            force: true
+            force: true,
+            dot: true // remove hidden files
         },
+        // delete bundle dirs, compiled core test files, node_modules contents (keep dir)
         clean: {
-            core: ['./amd/bundle/**', './JavaScriptSDK.Tests/Selenium/aicore.tests*'],
-            corecjs: ['./cjs/bundle/**', './JavaScriptSDK.Tests/Selenium/aicore.tests*']
+            core: ['./amd/bundle/**', './JavaScriptSDK.Tests/Selenium/aicore.tests*', 'node_modules/*'],
+            corecjs: ['./cjs/bundle/**', './JavaScriptSDK.Tests/Selenium/aicore.tests*', 'node_modules/*']
         },
         ts: {
             options: {
@@ -36,7 +38,7 @@ module.exports = function (grunt) {
                 tsconfig: './JavaScriptSDK.Tests/tsconfig.json',
                 src: [
                     './JavaScriptSDK.Tests/Selenium/ApplicationInsightsCore.Tests.ts',
-		            './JavaScriptSDK.Tests/Selenium/aitests.ts'
+                    './JavaScriptSDK.Tests/Selenium/aitests.ts'
                 ],
                 out: './JavaScriptSDK.Tests/Selenium/aicore.tests.js'
             }
@@ -45,7 +47,7 @@ module.exports = function (grunt) {
             core: {
                 options: {
                     urls: [
-                        './JavaScriptSDK.Tests/Selenium/Tests.html'                       
+                        './JavaScriptSDK.Tests/Selenium/Tests.html'
                     ],
                     timeout: 300 * 1000, // 5 min
                     console: false,
