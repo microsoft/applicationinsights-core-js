@@ -34,7 +34,7 @@ export class ApplicationInsightsCoreTests extends TestClass {
                 let config2 : IConfiguration = {
                         endpointUrl: "https://dc.services.visualstudio.com/v2/track",
                         instrumentationKey: "40ed4f60-2a2f-4f94-a617-22b20a520864",
-                        extensions: {}
+                        extensionConfig: {}
                 };
 
                 try {                    
@@ -45,12 +45,12 @@ export class ApplicationInsightsCoreTests extends TestClass {
                 let config : IConfiguration = {
                     endpointUrl: "https://dc.services.visualstudio.com/v2/track",
                     instrumentationKey: "",
-                    extensions: {}
+                    extensionConfig: {}
                 };
                 try {                    
                     appInsightsCore.initialize(config, [samplingPlugin]);
                 } catch (error) {
-                    Assert.ok(true, "Validates instrumentationKey");                    
+                    Assert.ok(true, "Validates instrumentationKey");
                 }
             }
         });
@@ -74,6 +74,30 @@ export class ApplicationInsightsCoreTests extends TestClass {
             }
         });
 
+
+        this.testCase({
+            name: "ApplicationInsightsCore: Plugins cannot be added with same priority",
+            test: () => {
+                let samplingPlugin = new TestSamplingPlugin();
+                samplingPlugin.priority = 20;
+
+                let samplingPlugin1 = new TestSamplingPlugin();
+                samplingPlugin1.priority = 20;
+
+                let channelPlugin = new ChannelPlugin();
+                channelPlugin.priority = 120;
+
+                let appInsightsCore = new AppInsightsCore();
+                try {
+                appInsightsCore.initialize(
+                    {instrumentationKey: "09465199-12AA-4124-817F-544738CC7C41"}, 
+                    [samplingPlugin, samplingPlugin1, channelPlugin]);
+                } catch (error) {
+                    Assert.ok(error.message.indexOf("priority") >= 0, "Priority cannot be the same");
+                }
+            }
+        });
+
         this.testCase({
             name: "ApplicationInsightsCore: flush clears channel buffer",
             test: () => {
@@ -87,6 +111,28 @@ export class ApplicationInsightsCoreTests extends TestClass {
                 appInsightsCore.getTransmissionControl().flush(true);
 
                 Assert.ok(channelPlugin.isFlushInvoked, "Flush triggered for channel");
+            }
+        });
+
+        this.testCase({
+            name: "ApplicationInsightsCore: Plugins can be provided through configuration",
+            test: () => {
+                let samplingPlugin = new TestSamplingPlugin();
+                samplingPlugin.priority = 20;
+
+                let channelPlugin = new ChannelPlugin();
+                channelPlugin.priority = 120;
+
+                let appInsightsCore = new AppInsightsCore();
+                try {
+                appInsightsCore.initialize(
+                    {instrumentationKey: "09465199-12AA-4124-817F-544738CC7C41", extensions: [samplingPlugin]},
+                    [channelPlugin]);
+                } catch (error) {
+                    Assert.ok(false, "No error expected");
+                }
+                
+                Assert.ok((<any>appInsightsCore)._extensions.length === 2, "Extensions can be provided through overall configuration");
             }
         });
     }

@@ -49,7 +49,6 @@ export class AppInsightsCore implements IAppInsightsCore {
             }
         });
 
-        this.config.extensions = this.config.extensions ? this.config.extensions : [];
         if (this.config.extensions.length > 0) {
             let isValid = true;
             this.config.extensions.forEach(item =>
