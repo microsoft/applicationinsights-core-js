@@ -35,19 +35,36 @@ export class AppInsightsCore implements IAppInsightsCore {
 
         this.config = config;
 
-        // add notification to the extensions in the config so other plugins can access it
         this._notificationManager = new NotificationManager();
-        this.config.extensions = this.config.extensions ? this.config.extensions : {};
-        this.config.extensions.NotificationManager = this._notificationManager;
+        this.config.extensions = CoreUtils.isNullOrUndefined(this.config.extensions) ? [] : this.config.extensions;
+        
+        // add notification to the extensions in the config so other plugins can access it
+        this.config.extensionConfig = this.config.extensionConfig ? this.config.extensionConfig : {};
+        this.config.extensionConfig.NotificationManager = this._notificationManager;
 
         // Initial validation
         extensions.forEach((extension: ITelemetryPlugin) => {
             if (CoreUtils.isNullOrUndefined(extension.initialize)) {
-                throw Error("Extensions must provide callback to initialize");
+                throw Error(validationError);
             }
         });
 
-        this._extensions = extensions.sort((a, b) => {
+        this.config.extensions = this.config.extensions ? this.config.extensions : [];
+        if (this.config.extensions.length > 0) {
+            let isValid = true;
+            this.config.extensions.forEach(item =>
+            {
+                if (CoreUtils.isNullOrUndefined(item)) {
+                    isValid = false;
+                }   
+            });
+
+            if (!isValid) {
+                throw Error(validationError);
+            }
+        }        
+
+        this._extensions = extensions.concat(this.config.extensions).sort((a, b) => {
             let extA = (<ITelemetryPlugin>a);
             let extB = (<ITelemetryPlugin>b);
             let typeExtA = typeof extA.processTelemetry;
@@ -63,6 +80,17 @@ export class AppInsightsCore implements IAppInsightsCore {
 
             if (typeExtA !== 'function' && typeExtB === 'function') {
                 return -1;
+            }
+        });
+
+        // Check if any two extensions have the same priority, then throw error
+        let priority = {};
+        this._extensions.forEach(ext => {
+            let t = (<ITelemetryPlugin>ext);
+            if (t && priority[t.priority]) {
+                throw new Error(duplicatePriority);
+            } else {
+                priority[t.priority] = 1; // set a value
             }
         });
 
@@ -168,3 +196,6 @@ export class AppInsightsCore implements IAppInsightsCore {
         this._notificationManager.eventsDiscarded([telemetryItem], EventsDiscardedReason.InvalidEvent);
     }
 }
+
+const validationError = "Extensions must provide callback to initialize";    
+const duplicatePriority = "One or more extensions are set at same priority";

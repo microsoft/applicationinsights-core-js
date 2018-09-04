@@ -1,3 +1,5 @@
+import { ITelemetryPlugin } from "./ITelemetryPlugin";
+
 "use strict";
 
 /**
@@ -18,5 +20,10 @@ export interface IConfiguration {
     /**
     * Extension configs loaded in SDK
     */
-    extensions?: { [key: string]: any }; // extension configs
+    extensionConfig?: { [key: string]: any }; // extension configs;
+
+    /**
+     * Additional plugins that should be loaded by core at runtime
+     */
+    extensions?: ITelemetryPlugin[];
 }
