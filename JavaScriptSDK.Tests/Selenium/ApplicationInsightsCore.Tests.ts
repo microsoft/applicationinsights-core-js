@@ -5,6 +5,8 @@
 import { IConfiguration, ITelemetryPlugin, ITelemetryItem } from "../../applicationinsights-core-js"
 import { AppInsightsCore } from "../../JavaScriptSDK/AppInsightsCore";
 import { IChannelControls } from "../../JavaScriptSDK.Interfaces/IChannelControls";
+import { _InternalLogging } from "../../JavaScriptSDK/DiagnosticLogging";
+import { _InternalMessageId, LoggingSeverity } from "../../JavaScriptSDK.Enums/LoggingEnums";
 
 export class ApplicationInsightsCoreTests extends TestClass {
 
@@ -87,6 +89,22 @@ export class ApplicationInsightsCoreTests extends TestClass {
                 appInsightsCore.getTransmissionControl().flush(true);
 
                 Assert.ok(channelPlugin.isFlushInvoked, "Flush triggered for channel");
+            }
+        });
+
+        this.testCase({
+            name: "Logging: Critical logging history is saved",
+            test: () => {
+                const messageId: _InternalMessageId = _InternalMessageId.CannotAccessCookie; // can be any id
+                const messageKey = _InternalLogging['AIInternalMessagePrefix'] + _InternalMessageId[messageId];
+                Assert.ok(_InternalLogging['_messageCount'] === 0, 'No internal logging performed yet');
+                Assert.ok(!_InternalLogging['_messageLogged'][messageKey], "messageId not yet logged");
+
+                _InternalLogging.throwInternal(LoggingSeverity.CRITICAL, messageId, "Test Error");
+                console.log(_InternalLogging['_messageCount']);
+
+                Assert.ok(_InternalLogging['_messageCount'] === 1, 'Logging success');
+                Assert.ok(_InternalLogging['_messageLogged'][messageKey], "Correct messageId logged");
             }
         });
     }

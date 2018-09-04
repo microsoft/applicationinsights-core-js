@@ -1,3 +1,5 @@
+"use strict"
+
 import { _InternalMessageId, LoggingSeverity } from "../JavaScriptSDK.Enums/LoggingEnums";
 
 export class _InternalLogMessage {
