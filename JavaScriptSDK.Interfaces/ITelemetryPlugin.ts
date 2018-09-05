@@ -34,6 +34,4 @@ export interface IPlugin {
     * Initialize plugin loaded by SDK
     */
     initialize: (config: IConfiguration, core: IAppInsightsCore, extensions: IPlugin[]) => void;
-
-
 }
