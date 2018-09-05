@@ -86,7 +86,7 @@ export class AppInsightsCore implements IAppInsightsCore {
         let priority = {};
         this._extensions.forEach(ext => {
             let t = (<ITelemetryPlugin>ext);
-            if (t) { 
+            if (t && t.priority) { 
                 if (priority[t.priority]) {
                     throw new Error(duplicatePriority);
                 } else {
@@ -98,7 +98,7 @@ export class AppInsightsCore implements IAppInsightsCore {
         // Set next plugin for all but last extension
         for (let idx = 0; idx < this._extensions.length - 1; idx++) {
             if (this._extensions[idx] && typeof (<any>this._extensions[idx]).processTelemetry !== 'function') {
-                // these are initialized only
+                // these are initialized only, allowing an entry point for extensions to be initialized when SDK initializes
                 continue;
             }
 
