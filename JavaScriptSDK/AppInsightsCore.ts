@@ -39,7 +39,7 @@ export class AppInsightsCore implements IAppInsightsCore {
         this.config.extensions = CoreUtils.isNullOrUndefined(this.config.extensions) ? [] : this.config.extensions;
         
         // add notification to the extensions in the config so other plugins can access it
-        this.config.extensionConfig = this.config.extensionConfig ? this.config.extensionConfig : {};
+        this.config.extensionConfig = CoreUtils.isNullOrUndefined(this.config.extensionConfig) ? {} : this.config.extensionConfig;
         this.config.extensionConfig.NotificationManager = this._notificationManager;
 
         // Initial validation
@@ -86,10 +86,12 @@ export class AppInsightsCore implements IAppInsightsCore {
         let priority = {};
         this._extensions.forEach(ext => {
             let t = (<ITelemetryPlugin>ext);
-            if (t && priority[t.priority]) {
-                throw new Error(duplicatePriority);
-            } else {
-                priority[t.priority] = 1; // set a value
+            if (t) { 
+                if (priority[t.priority]) {
+                    throw new Error(duplicatePriority);
+                } else {
+                    priority[t.priority] = 1; // set a value
+                }
             }
         });
 
