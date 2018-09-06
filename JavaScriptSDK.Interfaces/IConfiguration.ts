@@ -23,18 +23,25 @@ export interface IConfiguration {
     maxMessageLimit?: number;
 
     /**
-     * Console logging level
+     * Console logging level. All logs with a severity level higher
+     * than the configured level will be printed to console. Otherwise 
+     * they are suppressed. ie Level 2 will print both CRITICAL and
+     * WARNING logs to console, level 1 prints only CRITICAL.
+     * 
      * 0: ALL console logging off
-     * 1: logs to console logs labelled at most as WARNING
-     * 2: logs to console logs laballed at most as CRITICAL
+     * 1: logs to console: severity >= CRITIAL
+     * 2: logs to console: severity >= WARNING
      */
     loggingLevelConsole?: number;
 
     /**
-     * Telemtry logging level to instrumentation key
+     * Telemtry logging level to instrumentation key. All logs with a severity
+     * level higher than the configured level will sent as telemetry data to
+     * the configured instrumentation key.
+     * 
      * 0: ALL iKey logging off
-     * 1: logs to iKey logs labelled at most as WARNING
-     * 2: logs to iKey logs laballed at most as CRITICAL
+     * 1: logs to iKey: severity >= CRITIAL
+     * 2: logs to iKey: severity >= WARNING
      */
     loggingLevelTelemetry?: number
 
