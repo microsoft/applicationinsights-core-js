@@ -45,5 +45,5 @@ export interface IAppInsightsCore {
      */
     removeNotificationListener(listener: INotificationListener): void;
 
-    pollInternalLogs(): number;
+    pollInternalLogs(intervalMS?: number): number;
 }

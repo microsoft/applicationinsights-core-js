@@ -1,11 +1,31 @@
 import { _InternalMessageId, LoggingSeverity } from "../JavaScriptSDK.Enums/LoggingEnums";
 import { _InternalLogMessage } from "../JavaScriptSDK/DiagnosticLogger";
 
+"use strict"
+
 export default interface IDiagnosticLogger {
-
+    /**
+     * When this is true the SDK will throw exceptions to aid in debugging.
+     */
     enableDebugExceptions: () => boolean;
-    verboseLogging: () => boolean;
+    
+    /**
+     * 0: OFF
+     * 1: only critical
+     * 2: critial + info
+     */
+    consoleLoggingLevel: () => number;
 
+    /**
+     * 0: OFF
+     * 1: CRITICAL
+     * 2: WARNING
+     */
+    telemetryLoggingLevel: () => number;
+
+    /**
+     * The internal logging queue
+     */
     queue: Array<_InternalLogMessage>;
 
     /**

@@ -2,12 +2,12 @@ export enum LoggingSeverity {
     /**
      * Error will be sent as internal telemetry
      */
-    CRITICAL = 0,
+    CRITICAL = 1,
 
     /**
      * Error will NOT be sent as internal telemetry, and will only be shown in browser console
      */
-    WARNING = 1
+    WARNING = 2,
 }
 
 /**

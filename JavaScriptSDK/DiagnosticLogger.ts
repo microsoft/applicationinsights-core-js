@@ -1,13 +1,14 @@
 "use strict"
-
+import { IConfiguration } from "../JavaScriptSDK.Interfaces/IConfiguration"
 import { _InternalMessageId, LoggingSeverity } from "../JavaScriptSDK.Enums/LoggingEnums";
 import IDiagnosticLogging from "../JavaScriptSDK.Interfaces/IDiagnosticLogger";
+import { CoreUtils } from "./CoreUtils";
 
 export class _InternalLogMessage{
     public message: string;
     public messageId: _InternalMessageId;
 
-    public static dataType: string = "LoggerData";
+    public static dataType: string = "MessageData";
 
     /**
      * For user non actionable traces use AI Internal prefix.
@@ -51,9 +52,18 @@ export class DiagnosticLogger implements IDiagnosticLogging {
     public enableDebugExceptions = () => false;
 
     /**
-     * When this is true the SDK will log more messages to aid in debugging.
+     * 0: OFF
+     * 1: CRITICAL
+     * 2: >= WARNING
      */
-    public verboseLogging = () => false;
+    public consoleLoggingLevel = () => 0;
+
+    /**
+     * 0: OFF
+     * 1: CRITICAL
+     * 2: >= WARNING
+     */
+    public telemetryLoggingLevel = () => 2;
 
     /**
      * The internal logging queue
@@ -75,6 +85,21 @@ export class DiagnosticLogger implements IDiagnosticLogging {
      */
     private _messageLogged: { [type: string]: boolean } = {};
 
+    constructor(config?: IConfiguration) {
+        if (!CoreUtils.isNullOrUndefined(config.loggingLevelConsole)) {
+            this.consoleLoggingLevel = () => { return config.loggingLevelConsole };
+        }
+        if (!CoreUtils.isNullOrUndefined(config.loggingLevelTelemetry)) {
+            this.telemetryLoggingLevel = () => { return config.loggingLevelTelemetry };
+        }
+        if (!CoreUtils.isNullOrUndefined(config.maxMessageLimit)) {
+            this.MAX_INTERNAL_MESSAGE_LIMIT = config.maxMessageLimit;
+        }
+        if (!CoreUtils.isNullOrUndefined(config.enableDebugExceptions)) {
+            this.enableDebugExceptions = () => { return config.enableDebugExceptions };
+        }
+    }
+
     /**
      * This method will throw exceptions in debug mode or attempt to log the error as a console warning.
      * @param severity {LoggingSeverity} - The severity of the log message
@@ -92,13 +117,13 @@ export class DiagnosticLogger implements IDiagnosticLogging {
                         // check if this message type was already logged to console for this page view and if so, don't log it again
                         var messageKey = _InternalMessageId[message.messageId];
 
-                        if (!this._messageLogged[messageKey] || this.verboseLogging()) {
+                        if (!this._messageLogged[messageKey] || this.consoleLoggingLevel() >= LoggingSeverity.WARNING) {
                             this.warnToConsole(message.message);
                             this._messageLogged[messageKey] = true;
                         }
                     } else {
                         // don't log internal AI traces in the console, unless the verbose logging is enabled
-                        if (this.verboseLogging()) {
+                        if (this.consoleLoggingLevel() >= LoggingSeverity.WARNING) {
                             this.warnToConsole(message.message);
                         }
                     }
@@ -173,7 +198,7 @@ export class DiagnosticLogger implements IDiagnosticLogging {
 
         if (logMessage) {
             // Push the event in the internal queue
-            if (this.verboseLogging() || severity === LoggingSeverity.CRITICAL) {
+            if (severity <= this.telemetryLoggingLevel()) {
                 this.queue.push(message);
                 this._messageCount++;
             }

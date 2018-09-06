@@ -6,6 +6,7 @@ import { IConfiguration, ITelemetryPlugin, ITelemetryItem } from "../../applicat
 import { AppInsightsCore } from "../../JavaScriptSDK/AppInsightsCore";
 import { IChannelControls } from "../../JavaScriptSDK.Interfaces/IChannelControls";
 import { _InternalMessageId, LoggingSeverity } from "../../JavaScriptSDK.Enums/LoggingEnums";
+import { _InternalLogMessage } from "../../JavaScriptSDK/DiagnosticLogger";
 
 export class ApplicationInsightsCoreTests extends TestClass {
 
@@ -103,15 +104,118 @@ export class ApplicationInsightsCoreTests extends TestClass {
                 const messageKey = appInsightsCore.logger['AIInternalMessagePrefix'] + _InternalMessageId[messageId];
 
                 // Test precondition
-                Assert.ok(appInsightsCore.logger['_messageCount'] === 0, 'No internal logging performed yet');
-                Assert.ok(!appInsightsCore.logger['_messageLogged'][messageKey], "messageId not yet logged");
+                Assert.ok(appInsightsCore.logger['_messageCount'] === 0, 'PRE: No internal logging performed yet');
+                Assert.ok(!appInsightsCore.logger['_messageLogged'][messageKey], "PRE: messageId not yet logged");
 
                 // Act
                 appInsightsCore.logger.throwInternal(LoggingSeverity.CRITICAL, messageId, "Test Error");
 
                 // Test postcondition
-                Assert.ok(appInsightsCore.logger['_messageCount'] === 1, 'Logging success');
-                Assert.ok(appInsightsCore.logger['_messageLogged'][messageKey], "Correct messageId logged");
+                Assert.ok(appInsightsCore.logger['_messageCount'] === 1, 'POST: Logging success');
+                Assert.ok(appInsightsCore.logger['_messageLogged'][messageKey], "POST: Correct messageId logged");
+            }
+        });
+
+        // TODO: test no reinitialization
+        this.testCase({
+            name: "Initialize: core cannot be reinitialized",
+            test: () => {
+                // Setup
+                const channelPlugin = new ChannelPlugin();
+                const appInsightsCore = new AppInsightsCore();
+                const initFunction = () => appInsightsCore.initialize({instrumentationKey: "09465199-12AA-4124-817F-544738CC7C41"}, [channelPlugin]);
+
+                // Assert precondition
+                Assert.ok(!appInsightsCore["_isInitialized"], "PRE: core constructed but not initialized");
+
+                // Init
+                initFunction();
+
+                // Assert initialized
+                Assert.ok(appInsightsCore["_isInitialized"], "core is initialized");
+
+                Assert.throws(initFunction, Error, "Core cannot be reinitialized");
+            }
+        });
+
+        // TODO: test pollInternalLogs
+        this.testCase({
+            name: "DiagnosticLogger: Logs can be polled",
+            test: () => {
+                // Setup
+                const channelPlugin = new ChannelPlugin();
+                const appInsightsCore = new AppInsightsCore();
+                appInsightsCore.initialize(
+                    {
+                        instrumentationKey: "09465199-12AA-4124-817F-544738CC7C41",
+                        diagnosticLoggingInterval: 1
+                    }, [channelPlugin]);
+                const trackTraceSpy = this.sandbox.stub(appInsightsCore, "track");
+
+                Assert.equal(0 ,appInsightsCore.logger.queue.length, "Queue is empty");
+
+                // Setup queue
+                const queue: Array<_InternalLogMessage> = appInsightsCore.logger.queue;
+                queue.push(new _InternalLogMessage(1, "Hello1"));
+                queue.push(new _InternalLogMessage(2, "Hello2"));
+                const poller = appInsightsCore.pollInternalLogs();
+
+                // Assert precondition
+                Assert.equal(2, appInsightsCore.logger.queue.length, "Queue contains 2 items");
+
+                // Act
+                this.clock.tick(1);
+
+                // Assert postcondition
+                Assert.equal(0 ,appInsightsCore.logger.queue.length, "Queue is empty");
+
+                const data1 = trackTraceSpy.args[0][0];
+                Assert.ok(data1.baseData.message.indexOf("Hello1") !== -1);
+
+                const data2 = trackTraceSpy.args[1][0];
+                Assert.ok(data2.baseData.message.indexOf("Hello2") !== -1);
+
+                // Cleanup
+                clearInterval(poller);
+            }
+        });
+
+        // TODO: test logger crosscontamination
+        this.testCase({
+            name: "DiagnosticLogger: Logs in separate cores do not interfere",
+            test: () => {
+                // Setup
+                const channelPlugin = new ChannelPlugin();
+                const appInsightsCore = new AppInsightsCore();
+                appInsightsCore.initialize(
+                    {
+                        instrumentationKey: "09465199-12AA-4124-817F-544738CC7C41"
+                    }, [channelPlugin]
+                );
+                const dummyCore = new AppInsightsCore();
+                dummyCore.initialize(
+                    {
+                        instrumentationKey: "09465199-12AA-4124-817F-544738CC7C41"
+                    }, [channelPlugin]
+                );
+
+                const messageId: _InternalMessageId = _InternalMessageId.CannotAccessCookie; // can be any id
+                const messageKey = appInsightsCore.logger['AIInternalMessagePrefix'] + _InternalMessageId[messageId];
+
+                // Test precondition
+                Assert.equal(0, appInsightsCore.logger['_messageCount'], 'PRE: No internal logging performed yet');
+                Assert.ok(!appInsightsCore.logger['_messageLogged'][messageKey], "PRE: messageId not yet logged");
+                Assert.equal(0, dummyCore.logger['_messageCount'], 'PRE: No dummy logging');
+                Assert.ok(!dummyCore.logger['_messageLogged'][messageKey], "PRE: No dummy messageId logged");
+
+                // Act
+                appInsightsCore.logger.throwInternal(LoggingSeverity.CRITICAL, messageId, "Test Error");
+
+                // Test postcondition
+                Assert.equal(1, appInsightsCore.logger['_messageCount'], 'POST: Logging success');
+                Assert.ok(appInsightsCore.logger['_messageLogged'][messageKey], "POST: Correct messageId logged");
+                Assert.equal(0, dummyCore.logger['_messageCount'], 'POST: No dummy logging');
+                Assert.ok(!dummyCore.logger['_messageLogged'][messageKey], "POST: No dummy messageId logged");
             }
         });
     }

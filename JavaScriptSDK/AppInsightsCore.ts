@@ -31,7 +31,7 @@ export class AppInsightsCore implements IAppInsightsCore {
 
         // Make sure core is only initialized once
         if (this._isInitialized) {
-            return;
+            throw Error("Core should not be initialized more than once");
         }
 
         if (!extensions || extensions.length === 0) {
@@ -50,7 +50,7 @@ export class AppInsightsCore implements IAppInsightsCore {
         this.config.extensions = this.config.extensions ? this.config.extensions : {};
         this.config.extensions.NotificationManager = this._notificationManager;
 
-        this.logger = new DiagnosticLogger();
+        this.logger = new DiagnosticLogger(config);
 
         // Initial validation
         extensions.forEach((extension: ITelemetryPlugin) => {
@@ -92,7 +92,6 @@ export class AppInsightsCore implements IAppInsightsCore {
 
         this._isInitialized = true;
     }
-
 
     getTransmissionControl(): IChannelControls {
         for (let i = 0; i < this._extensions.length; i++) {
@@ -160,7 +159,14 @@ export class AppInsightsCore implements IAppInsightsCore {
         this._notificationManager.removeNotificationListener(listener);
     }
     
-    pollInternalLogs() {
+    /**
+     * Periodically check logger.queue for 
+     */
+    pollInternalLogs(): number {
+        if (!(this.config.diagnosticLoggingInterval > 0)) {
+            throw Error("config.diagnosticLoggingInterval must be a positive integer");
+        }
+
         return setInterval(() => {
             const queue: Array<_InternalLogMessage> = this.logger.queue;
 
@@ -174,8 +180,9 @@ export class AppInsightsCore implements IAppInsightsCore {
                 };
 
                 this.track(item);
-            })
-        }, 1000);
+            });
+            queue.length = 0;
+        }, this.config.diagnosticLoggingInterval);
     }
 
     private _validateTelmetryItem(telemetryItem: ITelemetryItem) {
