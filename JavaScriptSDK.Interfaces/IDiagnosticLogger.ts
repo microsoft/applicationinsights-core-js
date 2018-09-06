@@ -1,5 +1,5 @@
 import { _InternalMessageId, LoggingSeverity } from "../JavaScriptSDK.Enums/LoggingEnums";
-import { _InternalLogging, _InternalLogMessage } from "../JavaScriptSDK/DiagnosticLogging";
+import { _InternalLogging, _InternalLogMessage } from "../JavaScriptSDK/DiagnosticLogger";
 
 export default interface IDiagnosticLogger {
 

@@ -5,7 +5,7 @@
 import { IConfiguration, ITelemetryPlugin, ITelemetryItem } from "../../applicationinsights-core-js"
 import { AppInsightsCore } from "../../JavaScriptSDK/AppInsightsCore";
 import { IChannelControls } from "../../JavaScriptSDK.Interfaces/IChannelControls";
-import { _InternalLogging } from "../../JavaScriptSDK/DiagnosticLogging";
+import { _InternalLogging } from "../../JavaScriptSDK/DiagnosticLogger";
 import { _InternalMessageId, LoggingSeverity } from "../../JavaScriptSDK.Enums/LoggingEnums";
 
 export class ApplicationInsightsCoreTests extends TestClass {

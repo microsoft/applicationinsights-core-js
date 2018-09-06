@@ -8,7 +8,7 @@ import { EventsDiscardedReason } from "../JavaScriptSDK.Enums/EventsDiscardedRea
 import { CoreUtils } from "./CoreUtils";
 import { NotificationManager } from "./NotificationManager";
 import IDiagnosticLogger from "../JavaScriptSDK.Interfaces/IDiagnosticLogger";
-import { _InternalLogMessage, DiagnosticLogger } from "./DiagnosticLogging";
+import { _InternalLogMessage, DiagnosticLogger } from "./DiagnosticLogger";
 import { _InternalMessageId } from "../JavaScriptSDK.Enums/LoggingEnums";
 
 "use strict";
