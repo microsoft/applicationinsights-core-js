@@ -51,7 +51,7 @@ cjs>
    cd cjs
     update version in applicationinsights-core-js.nuspec (version number even for cjs)  
    nuget pack
-   nuget.exe push -Source "ApplicationInsights-Team" -ApiKey VSTS ApplicationInsights.core.js.Sample.0.0.66.nupkg
+   nuget.exe push -Source "ApplicationInsights-Team" -ApiKey VSTS <Nuget Package Name>.nupkg
    
 amd> 
 	 grunt core  
@@ -59,4 +59,4 @@ amd>
    cd amd  
     update version in applicationinsights-core-js.nuspec (version number odd for amd)  
    nuget pack
-   npm publish --tag cjs
+   nuget.exe push -Source "ApplicationInsights-Team" -ApiKey VSTS <Nuget Package Name>.nupkg

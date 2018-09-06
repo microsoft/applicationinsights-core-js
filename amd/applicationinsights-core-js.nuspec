@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package>
     <metadata>
-        <id>ApplicationInsights.core.js.Sample</id>
-		<title>ApplicationInsights.core.js.Sample</title>
+        <id>ApplicationInsights.core.js.pre-release</id>
+		<title>ApplicationInsights.core.js.pre-release</title>
         <version>0.0.67</version>
         <authors>Marc-Antoine Fontenelle, Piyali Jana</authors>
         <owners>Microsoft</owners>	
