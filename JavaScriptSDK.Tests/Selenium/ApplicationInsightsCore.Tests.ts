@@ -5,7 +5,6 @@
 import { IConfiguration, ITelemetryPlugin, ITelemetryItem } from "../../applicationinsights-core-js"
 import { AppInsightsCore } from "../../JavaScriptSDK/AppInsightsCore";
 import { IChannelControls } from "../../JavaScriptSDK.Interfaces/IChannelControls";
-import { _InternalLogging } from "../../JavaScriptSDK/DiagnosticLogger";
 import { _InternalMessageId, LoggingSeverity } from "../../JavaScriptSDK.Enums/LoggingEnums";
 
 export class ApplicationInsightsCoreTests extends TestClass {
@@ -114,11 +113,6 @@ export class ApplicationInsightsCoreTests extends TestClass {
                 Assert.ok(appInsightsCore.logger['_messageCount'] === 1, 'Logging success');
                 Assert.ok(appInsightsCore.logger['_messageLogged'][messageKey], "Correct messageId logged");
             }
-        });
-
-        this.testCase({
-            name: "",
-            test: () => {}
         });
     }
 }

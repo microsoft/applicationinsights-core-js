@@ -8,5 +8,5 @@ export { EventsDiscardedReason } from "./JavaScriptSDK.Enums/EventsDiscardedReas
 export { AppInsightsCore } from "./JavaScriptSDK/AppInsightsCore";
 export { CoreUtils } from "./JavaScriptSDK/CoreUtils";
 export { NotificationManager } from "./JavaScriptSDK/NotificationManager";
-export {_InternalLogging, _InternalLogMessage} from './JavaScriptSDK/DiagnosticLogger';
+export {DiagnosticLogger, _InternalLogMessage} from './JavaScriptSDK/DiagnosticLogger';
 export {_InternalMessageId, LoggingSeverity} from './JavaScriptSDK.Enums/LoggingEnums';

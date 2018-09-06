@@ -38,7 +38,7 @@ export class _InternalLogMessage{
     }
 }
 
-export class _InternalLogging implements IDiagnosticLogging {
+export class DiagnosticLogger implements IDiagnosticLogging {
 
     /**
     *  Session storage key for the prefix for the key indicating message type already logged
@@ -196,4 +196,3 @@ export class _InternalLogging implements IDiagnosticLogging {
         return this._messageCount >= this.MAX_INTERNAL_MESSAGE_LIMIT;
     }
 }
-export {_InternalLogging as DiagnosticLogger};
