@@ -32,7 +32,7 @@ cjs>
    npm publish --tag cjs
 
 amd> 
-	 grunt core  
+     grunt core  
      Please ensure unit tests pass  
    cd amd  
     update version in package.json (version number odd for amd)  
