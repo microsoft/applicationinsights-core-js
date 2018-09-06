@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package>
+    <metadata>
+        <id>ApplicationInsights.core.js.Sample</id>
+		<title>ApplicationInsights.core.js.Sample</title>
+        <version>0.0.67</version>
+        <authors>Marc-Antoine Fontenelle, Piyali Jana</authors>
+        <owners>Microsoft</owners>	
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <releaseNotes>Testing AppInsights Core Nuget Release</releaseNotes>
+
+		<projectUrl>https://github.com/Microsoft/ApplicationInsights-core-js</projectUrl>
+        <description>Microsoft Application Insights Core Javascript SDK</description>
+
+        <!-- Copyright information -->
+        <copyright>Copyright ©2018 Microsoft</copyright>
+    </metadata>
+</package>
