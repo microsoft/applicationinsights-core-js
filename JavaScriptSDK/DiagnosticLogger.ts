@@ -157,13 +157,6 @@ export class DiagnosticLogger implements IDiagnosticLogging {
     }
 
     /**
-     * Clears the list of records indicating that internal message type was already logged
-     */
-    public clearInternalMessageLoggedTypes(): void {
-
-    }
-
-    /**
      * Sets the limit for the number of internal events before they are throttled
      * @param limit {number} - The throttle limit to set for internal events
      */
