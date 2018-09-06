@@ -40,13 +40,13 @@ amd>
    npm publish --tag amd  
 
 To publish a new nuget package, follow the steps below:
-1. Go to VSTS Packages (https://mseng.visualstudio.com/AppInsights/_packaging?feed=ApplicationInsights-Team&_a=feed) 
+1. Go to VSTS Packages (https://mseng.visualstudio.com/AppInsights/\_packaging?feed=ApplicationInsights-Team&\_a=feed) 
 2. Click "connect to feed". Select NuGet.
 3. Follow the instructions for installing the tools and adding the feed.
 4. Follow the instructions below to push cjs and amd nuget packages. (publish cjs first then amd)
 
 cjs>
-	 grunt corecjs  
+     grunt corecjs  
      Please ensure unit tests pass  
    cd cjs
     update version in applicationinsights-core-js.nuspec (version number even for cjs)  
@@ -54,7 +54,7 @@ cjs>
    nuget.exe push -Source "ApplicationInsights-Team" -ApiKey VSTS <Nuget Package Name>.nupkg
    
 amd> 
-	 grunt core  
+     grunt core  
      Please ensure unit tests pass  
    cd amd  
     update version in applicationinsights-core-js.nuspec (version number odd for amd)  
