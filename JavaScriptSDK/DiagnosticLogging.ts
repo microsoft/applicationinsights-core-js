@@ -1,10 +1,13 @@
 "use strict"
 
 import { _InternalMessageId, LoggingSeverity } from "../JavaScriptSDK.Enums/LoggingEnums";
+import IDiagnosticLogging from "../JavaScriptSDK.Interfaces/IDiagnosticLogger";
 
-export class _InternalLogMessage {
+export class _InternalLogMessage{
     public message: string;
     public messageId: _InternalMessageId;
+
+    public static dataType: string = "LoggerData";
 
     /**
      * For user non actionable traces use AI Internal prefix.
@@ -35,49 +38,49 @@ export class _InternalLogMessage {
     }
 }
 
-export class _InternalLogging {
+export class _InternalLogging implements IDiagnosticLogging {
 
     /**
     *  Session storage key for the prefix for the key indicating message type already logged
     */
-    private static AIInternalMessagePrefix: string = "AITR_";
+    private AIInternalMessagePrefix: string = "AITR_";
 
     /**
      * When this is true the SDK will throw exceptions to aid in debugging.
      */
-    public static enableDebugExceptions = () => false;
+    public enableDebugExceptions = () => false;
 
     /**
      * When this is true the SDK will log more messages to aid in debugging.
      */
-    public static verboseLogging = () => false;
+    public verboseLogging = () => false;
 
     /**
      * The internal logging queue
      */
-    public static queue: Array<_InternalLogMessage> = [];
+    public queue: Array<_InternalLogMessage> = [];
 
     /**
      * The maximum number of internal messages allowed to be sent per page view
      */
-    private static MAX_INTERNAL_MESSAGE_LIMIT = 25;
+    private MAX_INTERNAL_MESSAGE_LIMIT = 25;
 
     /**
      * Count of internal messages sent
      */
-    private static _messageCount = 0;
+    private _messageCount = 0;
 
     /**
      * Holds information about what message types were already logged to console or sent to server.
      */
-    private static _messageLogged: { [type: string]: boolean } = {};
+    private _messageLogged: { [type: string]: boolean } = {};
 
     /**
      * This method will throw exceptions in debug mode or attempt to log the error as a console warning.
      * @param severity {LoggingSeverity} - The severity of the log message
      * @param message {_InternalLogMessage} - The log message.
      */
-    public static throwInternal(severity: LoggingSeverity, msgId: _InternalMessageId, msg: string, properties?: Object, isUserAct = false) {
+    public throwInternal(severity: LoggingSeverity, msgId: _InternalMessageId, msg: string, properties?: Object, isUserAct = false) {
         let message = new _InternalLogMessage(msgId, msg, isUserAct, properties);
 
         if (this.enableDebugExceptions()) {
@@ -110,7 +113,7 @@ export class _InternalLogging {
      * This will write a warning to the console if possible
      * @param message {string} - The warning message
      */
-    public static warnToConsole(message: string) {
+    public warnToConsole(message: string) {
         if (typeof console !== "undefined" && !!console) {
             if (typeof console.warn === "function") {
                 console.warn(message);
@@ -123,7 +126,7 @@ export class _InternalLogging {
     /**
      * Resets the internal message count
      */
-    public static resetInternalMessageCount(): void {
+    public resetInternalMessageCount(): void {
         this._messageCount = 0;
         this._messageLogged = {};
     }
@@ -131,7 +134,7 @@ export class _InternalLogging {
     /**
      * Clears the list of records indicating that internal message type was already logged
      */
-    public static clearInternalMessageLoggedTypes(): void {
+    public clearInternalMessageLoggedTypes(): void {
 
     }
 
@@ -139,7 +142,7 @@ export class _InternalLogging {
      * Sets the limit for the number of internal events before they are throttled
      * @param limit {number} - The throttle limit to set for internal events
      */
-    public static setMaxInternalMessageLimit(limit: number): void {
+    public setMaxInternalMessageLimit(limit: number): void {
         if (!limit) {
             throw new Error('limit cannot be undefined.');
         }
@@ -152,14 +155,14 @@ export class _InternalLogging {
      * @param severity {LoggingSeverity} - The severity of the log message
      * @param message {_InternalLogMessage} - The message to log.
      */
-    private static logInternalMessage(severity: LoggingSeverity, message: _InternalLogMessage): void {
+    private logInternalMessage(severity: LoggingSeverity, message: _InternalLogMessage): void {
         if (this._areInternalMessagesThrottled()) {
             return;
         }
 
         // check if this message type was already logged for this session and if so, don't log it again
         var logMessage = true;
-        var messageKey = _InternalLogging.AIInternalMessagePrefix + _InternalMessageId[message.messageId];
+        var messageKey = this.AIInternalMessagePrefix + _InternalMessageId[message.messageId];
 
         // if the session storage is not available, limit to only one message type per page view
         if (this._messageLogged[messageKey]) {
@@ -189,7 +192,8 @@ export class _InternalLogging {
     /**
      * Indicates whether the internal events are throttled
      */
-    private static _areInternalMessagesThrottled(): boolean {
+    private _areInternalMessagesThrottled(): boolean {
         return this._messageCount >= this.MAX_INTERNAL_MESSAGE_LIMIT;
     }
 }
+export {_InternalLogging as DiagnosticLogger};

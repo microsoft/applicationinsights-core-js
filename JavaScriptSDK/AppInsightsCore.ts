@@ -7,6 +7,9 @@ import { INotificationListener } from "../JavaScriptSDK.Interfaces/INotification
 import { EventsDiscardedReason } from "../JavaScriptSDK.Enums/EventsDiscardedReason";
 import { CoreUtils } from "./CoreUtils";
 import { NotificationManager } from "./NotificationManager";
+import IDiagnosticLogger from "../JavaScriptSDK.Interfaces/IDiagnosticLogger";
+import { _InternalLogMessage, DiagnosticLogger } from "./DiagnosticLogging";
+import { _InternalMessageId } from "../JavaScriptSDK.Enums/LoggingEnums";
 
 "use strict";
 
@@ -14,15 +17,22 @@ export class AppInsightsCore implements IAppInsightsCore {
 
     public config: IConfiguration;
     public static defaultConfig: IConfiguration;
+    public logger: IDiagnosticLogger;
 
     private _extensions: Array<IPlugin>;
     private _notificationManager: NotificationManager;
+    private _isInitialized: boolean = false;
 
     constructor() {
         this._extensions = new Array<IPlugin>();
     }
 
     initialize(config: IConfiguration, extensions: IPlugin[]): void {
+
+        // Make sure core is only initialized once
+        if (this._isInitialized) {
+            return;
+        }
 
         if (!extensions || extensions.length === 0) {
             // throw error
@@ -39,6 +49,8 @@ export class AppInsightsCore implements IAppInsightsCore {
         this._notificationManager = new NotificationManager();
         this.config.extensions = this.config.extensions ? this.config.extensions : {};
         this.config.extensions.NotificationManager = this._notificationManager;
+
+        this.logger = new DiagnosticLogger();
 
         // Initial validation
         extensions.forEach((extension: ITelemetryPlugin) => {
@@ -77,6 +89,8 @@ export class AppInsightsCore implements IAppInsightsCore {
         }
 
         this._extensions.forEach(ext => ext.initialize(this.config, this, this._extensions)); // initialize
+
+        this._isInitialized = true;
     }
 
 
@@ -108,7 +122,7 @@ export class AppInsightsCore implements IAppInsightsCore {
             // setup default ikey if not passed in
             telemetryItem.instrumentationKey = this.config.instrumentationKey;
         }
-        if(!telemetryItem.timestamp) {
+        if (!telemetryItem.timestamp) {
             // add default timestamp if not passed in
             telemetryItem.timestamp = new Date();
         }
@@ -145,6 +159,24 @@ export class AppInsightsCore implements IAppInsightsCore {
     removeNotificationListener(listener: INotificationListener): void {
         this._notificationManager.removeNotificationListener(listener);
     }
+    
+    pollInternalLogs() {
+        return setInterval(() => {
+            const queue: Array<_InternalLogMessage> = this.logger.queue;
+
+            queue.forEach((logMessage: _InternalLogMessage) => {
+                const item: ITelemetryItem = {
+                    name: _InternalMessageId[logMessage.messageId],
+                    instrumentationKey: this.config.instrumentationKey,
+                    timestamp: new Date(),
+                    baseType: _InternalLogMessage.dataType,
+                    baseData: { message: logMessage.message }
+                };
+
+                this.track(item);
+            })
+        }, 1000);
+    }
 
     private _validateTelmetryItem(telemetryItem: ITelemetryItem) {
 
@@ -167,4 +199,5 @@ export class AppInsightsCore implements IAppInsightsCore {
     private _notifiyInvalidEvent(telemetryItem: ITelemetryItem): void {
         this._notificationManager.eventsDiscarded([telemetryItem], EventsDiscardedReason.InvalidEvent);
     }
+
 }

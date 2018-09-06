@@ -93,19 +93,32 @@ export class ApplicationInsightsCoreTests extends TestClass {
         });
 
         this.testCase({
-            name: "Logging: Critical logging history is saved",
+            name: "DiagnosticLogger: Critical logging history is saved",
             test: () => {
+                // Setup
+                const channelPlugin = new ChannelPlugin();
+                const appInsightsCore = new AppInsightsCore();
+                appInsightsCore.initialize({instrumentationKey: "09465199-12AA-4124-817F-544738CC7C41"}, [channelPlugin]);
+
                 const messageId: _InternalMessageId = _InternalMessageId.CannotAccessCookie; // can be any id
-                const messageKey = _InternalLogging['AIInternalMessagePrefix'] + _InternalMessageId[messageId];
-                Assert.ok(_InternalLogging['_messageCount'] === 0, 'No internal logging performed yet');
-                Assert.ok(!_InternalLogging['_messageLogged'][messageKey], "messageId not yet logged");
+                const messageKey = appInsightsCore.logger['AIInternalMessagePrefix'] + _InternalMessageId[messageId];
 
-                _InternalLogging.throwInternal(LoggingSeverity.CRITICAL, messageId, "Test Error");
-                console.log(_InternalLogging['_messageCount']);
+                // Test precondition
+                Assert.ok(appInsightsCore.logger['_messageCount'] === 0, 'No internal logging performed yet');
+                Assert.ok(!appInsightsCore.logger['_messageLogged'][messageKey], "messageId not yet logged");
 
-                Assert.ok(_InternalLogging['_messageCount'] === 1, 'Logging success');
-                Assert.ok(_InternalLogging['_messageLogged'][messageKey], "Correct messageId logged");
+                // Act
+                appInsightsCore.logger.throwInternal(LoggingSeverity.CRITICAL, messageId, "Test Error");
+
+                // Test postcondition
+                Assert.ok(appInsightsCore.logger['_messageCount'] === 1, 'Logging success');
+                Assert.ok(appInsightsCore.logger['_messageLogged'][messageKey], "Correct messageId logged");
             }
+        });
+
+        this.testCase({
+            name: "",
+            test: () => {}
         });
     }
 }
