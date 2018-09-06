@@ -25,7 +25,7 @@ export class _InternalLogMessage{
         this.messageId = msgId;
         this.message =
             (isUserAct ? _InternalLogMessage.AiUserActionablePrefix : _InternalLogMessage.AiNonUserActionablePrefix) +
-            _InternalMessageId[msgId].toString();
+            msgId;
 
         var diagnosticText =
             (msg ? " message:" + _InternalLogMessage.sanitizeDiagnosticText(msg) : "") +
@@ -83,7 +83,7 @@ export class DiagnosticLogger implements IDiagnosticLogging {
     /**
      * Holds information about what message types were already logged to console or sent to server.
      */
-    private _messageLogged: { [type: string]: boolean } = {};
+    private _messageLogged: { [type: number]: boolean } = {};
 
     constructor(config?: IConfiguration) {
         if (!CoreUtils.isNullOrUndefined(config.loggingLevelConsole)) {
@@ -115,7 +115,7 @@ export class DiagnosticLogger implements IDiagnosticLogging {
                 if (typeof (message.message) !== "undefined") {
                     if (isUserAct) {
                         // check if this message type was already logged to console for this page view and if so, don't log it again
-                        var messageKey = _InternalMessageId[message.messageId];
+                        var messageKey: number = +message.messageId;
 
                         if (!this._messageLogged[messageKey] || this.consoleLoggingLevel() >= LoggingSeverity.WARNING) {
                             this.warnToConsole(message.message);
@@ -187,7 +187,7 @@ export class DiagnosticLogger implements IDiagnosticLogging {
 
         // check if this message type was already logged for this session and if so, don't log it again
         var logMessage = true;
-        var messageKey = this.AIInternalMessagePrefix + _InternalMessageId[message.messageId];
+        var messageKey = this.AIInternalMessagePrefix + message.messageId;
 
         // if the session storage is not available, limit to only one message type per page view
         if (this._messageLogged[messageKey]) {

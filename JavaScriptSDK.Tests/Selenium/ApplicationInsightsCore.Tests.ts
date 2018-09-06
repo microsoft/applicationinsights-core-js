@@ -125,7 +125,7 @@ export class ApplicationInsightsCoreTests extends TestClass {
                 appInsightsCore.initialize({instrumentationKey: "09465199-12AA-4124-817F-544738CC7C41"}, [channelPlugin]);
 
                 const messageId: _InternalMessageId = _InternalMessageId.CannotAccessCookie; // can be any id
-                const messageKey = appInsightsCore.logger['AIInternalMessagePrefix'] + _InternalMessageId[messageId];
+                const messageKey = appInsightsCore.logger['AIInternalMessagePrefix'] + messageId;
 
                 // Test precondition
                 Assert.ok(appInsightsCore.logger['_messageCount'] === 0, 'PRE: No internal logging performed yet');
@@ -224,7 +224,7 @@ export class ApplicationInsightsCoreTests extends TestClass {
                 );
 
                 const messageId: _InternalMessageId = _InternalMessageId.CannotAccessCookie; // can be any id
-                const messageKey = appInsightsCore.logger['AIInternalMessagePrefix'] + _InternalMessageId[messageId];
+                const messageKey = appInsightsCore.logger['AIInternalMessagePrefix'] + messageId;
 
                 // Test precondition
                 Assert.equal(0, appInsightsCore.logger['_messageCount'], 'PRE: No internal logging performed yet');
@@ -242,7 +242,7 @@ export class ApplicationInsightsCoreTests extends TestClass {
                 Assert.ok(!dummyCore.logger['_messageLogged'][messageKey], "POST: No dummy messageId logged");
             }
         });
-        
+
         this.testCase({
             name: "ApplicationInsightsCore: Plugins can be provided through configuration",
             test: () => {

@@ -201,7 +201,7 @@ export class AppInsightsCore implements IAppInsightsCore {
 
             queue.forEach((logMessage: _InternalLogMessage) => {
                 const item: ITelemetryItem = {
-                    name: _InternalMessageId[logMessage.messageId],
+                    name: "InternalMessageId: " + logMessage.messageId,
                     instrumentationKey: this.config.instrumentationKey,
                     timestamp: new Date(),
                     baseType: _InternalLogMessage.dataType,
