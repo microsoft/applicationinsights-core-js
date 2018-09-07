@@ -22,18 +22,41 @@ cjs> grunt corecjs
 To run unit tests:
 grunt coretest
 
-To publish a new package (publish cjs first then amd)
+To publish a new npm package (publish cjs first then amd)
 cjs>
      grunt corecjs  
      Please ensure unit tests pass  
    cd cjs  
     update version in package.json (version number even for cjs)  
    npm pack  
-   npm publish --tag cjs  
+   npm publish --tag cjs
 
-amd> grunt core  
+amd> 
+     grunt core  
      Please ensure unit tests pass  
    cd amd  
     update version in package.json (version number odd for amd)  
    npm pack  
    npm publish --tag amd  
+
+To publish a new nuget package, follow the steps below:
+1. Go to VSTS Packages (https://mseng.visualstudio.com/AppInsights/\_packaging?feed=ApplicationInsights-Team&\_a=feed) 
+2. Click "connect to feed". Select NuGet.
+3. Follow the instructions for installing the tools and adding the feed.
+4. Follow the instructions below to push cjs and amd nuget packages. (publish cjs first then amd)
+
+cjs>
+     grunt corecjs  
+     Please ensure unit tests pass  
+   cd cjs
+    update version in applicationinsights-core-js.nuspec (version number even for cjs)  
+   nuget pack
+   nuget.exe push -Source "ApplicationInsights-Team" -ApiKey VSTS <Nuget Package Name>.nupkg
+   
+amd> 
+     grunt core  
+     Please ensure unit tests pass  
+   cd amd  
+    update version in applicationinsights-core-js.nuspec (version number odd for amd)  
+   nuget pack
+   nuget.exe push -Source "ApplicationInsights-Team" -ApiKey VSTS <Nuget Package Name>.nupkg
