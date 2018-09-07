@@ -7,6 +7,9 @@ import { INotificationListener } from "../JavaScriptSDK.Interfaces/INotification
 import { EventsDiscardedReason } from "../JavaScriptSDK.Enums/EventsDiscardedReason";
 import { CoreUtils } from "./CoreUtils";
 import { NotificationManager } from "./NotificationManager";
+import IDiagnosticLogger from "../JavaScriptSDK.Interfaces/IDiagnosticLogger";
+import { _InternalLogMessage, DiagnosticLogger } from "./DiagnosticLogger";
+import { _InternalMessageId } from "../JavaScriptSDK.Enums/LoggingEnums";
 
 "use strict";
 
@@ -14,15 +17,22 @@ export class AppInsightsCore implements IAppInsightsCore {
 
     public config: IConfiguration;
     public static defaultConfig: IConfiguration;
+    public logger: IDiagnosticLogger;
 
     private _extensions: Array<IPlugin>;
     private _notificationManager: NotificationManager;
+    private _isInitialized: boolean = false;
 
     constructor() {
         this._extensions = new Array<IPlugin>();
     }
 
     initialize(config: IConfiguration, extensions: IPlugin[]): void {
+
+        // Make sure core is only initialized once
+        if (this._isInitialized) {
+            throw Error("Core should not be initialized more than once");
+        }
 
         if (!extensions || extensions.length === 0) {
             // throw error
@@ -41,6 +51,8 @@ export class AppInsightsCore implements IAppInsightsCore {
         // add notification to the extensions in the config so other plugins can access it
         this.config.extensionConfig = CoreUtils.isNullOrUndefined(this.config.extensionConfig) ? {} : this.config.extensionConfig;
         this.config.extensionConfig.NotificationManager = this._notificationManager;
+
+        this.logger = new DiagnosticLogger(config);
 
         // Initial validation
         extensions.forEach((extension: ITelemetryPlugin) => {
@@ -106,8 +118,9 @@ export class AppInsightsCore implements IAppInsightsCore {
         }
 
         this._extensions.forEach(ext => ext.initialize(this.config, this, this._extensions)); // initialize
-    }
 
+        this._isInitialized = true;
+    }
 
     getTransmissionControl(): IChannelControls {
         for (let i = 0; i < this._extensions.length; i++) {
@@ -137,7 +150,7 @@ export class AppInsightsCore implements IAppInsightsCore {
             // setup default ikey if not passed in
             telemetryItem.instrumentationKey = this.config.instrumentationKey;
         }
-        if(!telemetryItem.timestamp) {
+        if (!telemetryItem.timestamp) {
             // add default timestamp if not passed in
             telemetryItem.timestamp = new Date();
         }
@@ -173,6 +186,32 @@ export class AppInsightsCore implements IAppInsightsCore {
      */
     removeNotificationListener(listener: INotificationListener): void {
         this._notificationManager.removeNotificationListener(listener);
+    }
+    
+    /**
+     * Periodically check logger.queue for 
+     */
+    pollInternalLogs(): number {
+        if (!(this.config.diagnosticLoggingInterval > 0)) {
+            throw Error("config.diagnosticLoggingInterval must be a positive integer");
+        }
+
+        return setInterval(() => {
+            const queue: Array<_InternalLogMessage> = this.logger.queue;
+
+            queue.forEach((logMessage: _InternalLogMessage) => {
+                const item: ITelemetryItem = {
+                    name: "InternalMessageId: " + logMessage.messageId,
+                    instrumentationKey: this.config.instrumentationKey,
+                    timestamp: new Date(),
+                    baseType: _InternalLogMessage.dataType,
+                    baseData: { message: logMessage.message }
+                };
+
+                this.track(item);
+            });
+            queue.length = 0;
+        }, this.config.diagnosticLoggingInterval);
     }
 
     private _validateTelmetryItem(telemetryItem: ITelemetryItem) {

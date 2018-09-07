@@ -3,6 +3,7 @@ import { IChannelControls } from "./IChannelControls";
 import { IPlugin } from "./ITelemetryPlugin";
 import { IConfiguration } from "./IConfiguration";
 import { INotificationListener } from "./INotificationListener";
+import IDiagnosticLogger from './IDiagnosticLogger';
 
 "use strict";
 
@@ -12,6 +13,8 @@ export interface IAppInsightsCore {
     * Config object used to initialize AppInsights
     */
     config: IConfiguration;
+
+    logger: IDiagnosticLogger;
 
     /*
     * Initialization queue. Contains functions to run when appInsights initializes
@@ -41,4 +44,6 @@ export interface IAppInsightsCore {
      * @param {INotificationListener} listener - INotificationListener to remove.
      */
     removeNotificationListener(listener: INotificationListener): void;
+
+    pollInternalLogs(intervalMS?: number): number;
 }
