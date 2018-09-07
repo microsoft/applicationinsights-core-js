@@ -28,8 +28,11 @@ export interface IConfiguration {
      * they are suppressed. ie Level 2 will print both CRITICAL and
      * WARNING logs to console, level 1 prints only CRITICAL.
      * 
+     * Note: Logs sent as telemetry to instrumentation key will also 
+     * be logged to console if their severity meets the configured loggingConsoleLevel
+     * 
      * 0: ALL console logging off
-     * 1: logs to console: severity >= CRITIAL
+     * 1: logs to console: severity >= CRITICAL
      * 2: logs to console: severity >= WARNING
      */
     loggingLevelConsole?: number;
@@ -40,7 +43,7 @@ export interface IConfiguration {
      * the configured instrumentation key.
      * 
      * 0: ALL iKey logging off
-     * 1: logs to iKey: severity >= CRITIAL
+     * 1: logs to iKey: severity >= CRITICAL
      * 2: logs to iKey: severity >= WARNING
      */
     loggingLevelTelemetry?: number
