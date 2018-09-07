@@ -66,14 +66,14 @@ export class DiagnosticLogger implements IDiagnosticLogging {
     public telemetryLoggingLevel = () => 2;
 
     /**
+     * The maximum number of internal messages allowed to be sent per page view
+     */
+    public maxInternalMessageLimit = () => { return 25; }
+
+    /**
      * The internal logging queue
      */
     public queue: Array<_InternalLogMessage> = [];
-
-    /**
-     * The maximum number of internal messages allowed to be sent per page view
-     */
-    private MAX_INTERNAL_MESSAGE_LIMIT = 25;
 
     /**
      * Count of internal messages sent
@@ -93,7 +93,7 @@ export class DiagnosticLogger implements IDiagnosticLogging {
             this.telemetryLoggingLevel = () => { return config.loggingLevelTelemetry };
         }
         if (!CoreUtils.isNullOrUndefined(config.maxMessageLimit)) {
-            this.MAX_INTERNAL_MESSAGE_LIMIT = config.maxMessageLimit;
+            this.maxInternalMessageLimit = () => { return config.maxMessageLimit; }
         }
         if (!CoreUtils.isNullOrUndefined(config.enableDebugExceptions)) {
             this.enableDebugExceptions = () => { return config.enableDebugExceptions };
@@ -157,18 +157,6 @@ export class DiagnosticLogger implements IDiagnosticLogging {
     }
 
     /**
-     * Sets the limit for the number of internal events before they are throttled
-     * @param limit {number} - The throttle limit to set for internal events
-     */
-    public setMaxInternalMessageLimit(limit: number): void {
-        if (!limit) {
-            throw new Error('limit cannot be undefined.');
-        }
-
-        this.MAX_INTERNAL_MESSAGE_LIMIT = limit;
-    }
-
-    /**
      * Logs a message to the internal queue.
      * @param severity {LoggingSeverity} - The severity of the log message
      * @param message {_InternalLogMessage} - The message to log.
@@ -197,7 +185,7 @@ export class DiagnosticLogger implements IDiagnosticLogging {
             }
 
             // When throttle limit reached, send a special event
-            if (this._messageCount == this.MAX_INTERNAL_MESSAGE_LIMIT) {
+            if (this._messageCount == this.maxInternalMessageLimit()) {
                 var throttleLimitMessage = "Internal events throttle limit per PageView reached for this app.";
                 var throttleMessage = new _InternalLogMessage(_InternalMessageId.MessageLimitPerPVExceeded, throttleLimitMessage, false);
 
@@ -211,6 +199,6 @@ export class DiagnosticLogger implements IDiagnosticLogging {
      * Indicates whether the internal events are throttled
      */
     private _areInternalMessagesThrottled(): boolean {
-        return this._messageCount >= this.MAX_INTERNAL_MESSAGE_LIMIT;
+        return this._messageCount >= this.maxInternalMessageLimit();
     }
 }

@@ -24,6 +24,11 @@ export default interface IDiagnosticLogger {
     telemetryLoggingLevel: () => number;
 
     /**
+     * The maximum number of internal messages allowed to be sent per page view
+     */
+    maxInternalMessageLimit: () => number;
+
+    /**
      * The internal logging queue
      */
     queue: Array<_InternalLogMessage>;
@@ -45,10 +50,4 @@ export default interface IDiagnosticLogger {
      * Resets the internal message count
      */
     resetInternalMessageCount(): void;
-
-    /**
-     * Sets the limit for the number of internal events before they are throttled
-     * @param limit {number} - The throttle limit to set for internal events
-     */
-    setMaxInternalMessageLimit(limit: number): void;
 }
