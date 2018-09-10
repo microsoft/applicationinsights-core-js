@@ -3,7 +3,7 @@ import { _InternalLogMessage } from "../JavaScriptSDK/DiagnosticLogger";
 
 "use strict"
 
-export default interface IDiagnosticLogger {
+export interface IDiagnosticLogger {
     /**
      * When this is true the SDK will throw exceptions to aid in debugging.
      */

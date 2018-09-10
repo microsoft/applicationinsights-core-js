@@ -7,7 +7,7 @@ import { INotificationListener } from "../JavaScriptSDK.Interfaces/INotification
 import { EventsDiscardedReason } from "../JavaScriptSDK.Enums/EventsDiscardedReason";
 import { CoreUtils } from "./CoreUtils";
 import { NotificationManager } from "./NotificationManager";
-import IDiagnosticLogger from "../JavaScriptSDK.Interfaces/IDiagnosticLogger";
+import { IDiagnosticLogger } from "../JavaScriptSDK.Interfaces/IDiagnosticLogger";
 import { _InternalLogMessage, DiagnosticLogger } from "./DiagnosticLogger";
 import { _InternalMessageId } from "../JavaScriptSDK.Enums/LoggingEnums";
 

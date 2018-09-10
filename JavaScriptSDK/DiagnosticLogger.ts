@@ -1,7 +1,7 @@
 "use strict"
 import { IConfiguration } from "../JavaScriptSDK.Interfaces/IConfiguration"
 import { _InternalMessageId, LoggingSeverity } from "../JavaScriptSDK.Enums/LoggingEnums";
-import IDiagnosticLogging from "../JavaScriptSDK.Interfaces/IDiagnosticLogger";
+import { IDiagnosticLogger } from "../JavaScriptSDK.Interfaces/IDiagnosticLogger";
 import { CoreUtils } from "./CoreUtils";
 
 export class _InternalLogMessage{
@@ -39,7 +39,7 @@ export class _InternalLogMessage{
     }
 }
 
-export class DiagnosticLogger implements IDiagnosticLogging {
+export class DiagnosticLogger implements IDiagnosticLogger {
 
     /**
     *  Session storage key for the prefix for the key indicating message type already logged

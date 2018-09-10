@@ -3,7 +3,7 @@ import { IChannelControls } from "./IChannelControls";
 import { IPlugin } from "./ITelemetryPlugin";
 import { IConfiguration } from "./IConfiguration";
 import { INotificationListener } from "./INotificationListener";
-import IDiagnosticLogger from './IDiagnosticLogger';
+import { IDiagnosticLogger } from './IDiagnosticLogger';
 
 "use strict";
 
