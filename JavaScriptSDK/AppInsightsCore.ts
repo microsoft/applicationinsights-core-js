@@ -257,7 +257,7 @@ class ChannelController implements ITelemetryPlugin {
 
     setNextPlugin: (next: ITelemetryPlugin) => {};
 
-    priority: number = 101; // in reserved range 100 to 200
+    priority: number = 200; // in reserved range 100 to 200
 
     initialize(config: IConfiguration, core: IAppInsightsCore, extensions: IPlugin[]) {
         this.channelQueue = new Array<IChannelControls[]>();
