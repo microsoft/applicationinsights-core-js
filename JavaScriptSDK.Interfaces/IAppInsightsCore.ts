@@ -24,7 +24,7 @@ export interface IAppInsightsCore {
     /*
     * Get transmission controls for controlling transmission behavior
     */
-    getTransmissionControl(): IChannelControls;
+    getTransmissionControls(): Array<IChannelControls[]>;
 
     /*
     * Core track API
