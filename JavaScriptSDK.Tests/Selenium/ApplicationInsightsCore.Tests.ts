@@ -150,7 +150,7 @@ export class ApplicationInsightsCoreTests extends TestClass {
                 // Setup
                 const channelPlugin = new ChannelPlugin();
                 const appInsightsCore = new AppInsightsCore();
-                appInsightsCore.initialize({instrumentationKey: "09465199-12AA-4124-817F-544738CC7C41"}, [channelPlugin]);
+                appInsightsCore.initialize({instrumentationKey: "09465199-12AA-4124-817F-544738CC7C41", loggingLevelTelemetry: 999}, [channelPlugin]);
 
                 const messageId: _InternalMessageId = _InternalMessageId.CannotAccessCookie; // can be any id
                 const messageKey = appInsightsCore.logger['AIInternalMessagePrefix'] + messageId;
@@ -174,7 +174,6 @@ export class ApplicationInsightsCoreTests extends TestClass {
                 // setup
                 const channelPlugin = new ChannelPlugin();
                 const appInsightsCore = new AppInsightsCore();
-                appInsightsCore.initialize({instrumentationKey: "09465199-12AA-4124-817F-544738CC7C41"}, [channelPlugin]);
                 appInsightsCore.logger = new DiagnosticLogger();
 
                 const messageId: _InternalMessageId = _InternalMessageId.CannotAccessCookie; // can be any id
@@ -187,7 +186,6 @@ export class ApplicationInsightsCoreTests extends TestClass {
                 appInsightsCore.logger.throwInternal(LoggingSeverity.CRITICAL, messageId, "Some message");
 
                 // Test postcondition
-                Assert.ok(appInsightsCore.logger['_messageCount'] === 1, 'POST: Logging success');
                 Assert.ok(appInsightsCore.logger['_messageLogged'][messageKey], "POST: Correct messageId logged");
             }
         });
@@ -265,13 +263,15 @@ export class ApplicationInsightsCoreTests extends TestClass {
                 const appInsightsCore = new AppInsightsCore();
                 appInsightsCore.initialize(
                     {
-                        instrumentationKey: "09465199-12AA-4124-817F-544738CC7C41"
+                        instrumentationKey: "09465199-12AA-4124-817F-544738CC7C41",
+                        loggingLevelTelemetry: 999
                     }, [channelPlugin]
                 );
                 const dummyCore = new AppInsightsCore();
                 dummyCore.initialize(
                     {
-                        instrumentationKey: "09465199-12AA-4124-817F-544738CC7C41"
+                        instrumentationKey: "09465199-12AA-4124-817F-544738CC7C41",
+                        loggingLevelTelemetry: 999
                     }, [channelPlugin]
                 );
 
