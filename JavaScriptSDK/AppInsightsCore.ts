@@ -145,6 +145,11 @@ export class AppInsightsCore implements IAppInsightsCore {
             this._notifiyInvalidEvent(telemetryItem);
             throw Error("Provide data.baseType for data.baseData");
         }
+        
+        if (!telemetryItem.baseType) {
+            // Hard coded from Common::Event.ts::Event.dataType
+            telemetryItem.baseType = "EventData";
+        }
 
         if (!telemetryItem.instrumentationKey) {
             // setup default ikey if not passed in
@@ -154,7 +159,7 @@ export class AppInsightsCore implements IAppInsightsCore {
             // add default timestamp if not passed in
             telemetryItem.timestamp = new Date();
         }
-
+ 
         // do basic validation before sending it through the pipeline
         this._validateTelmetryItem(telemetryItem);
 
