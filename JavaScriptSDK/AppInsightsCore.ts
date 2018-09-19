@@ -22,9 +22,11 @@ export class AppInsightsCore implements IAppInsightsCore {
     private _extensions: Array<IPlugin>;
     private _notificationManager: NotificationManager;
     private _isInitialized: boolean = false;
+    private _channelController: ChannelController;
 
     constructor() {
         this._extensions = new Array<IPlugin>();
+        this._channelController = new ChannelController();
     }
 
     initialize(config: IConfiguration, extensions: IPlugin[]): void {
@@ -81,7 +83,7 @@ export class AppInsightsCore implements IAppInsightsCore {
             let typeExtA = typeof extA.processTelemetry;
             let typeExtB = typeof extB.processTelemetry;
             if (typeExtA === 'function' && typeExtB === 'function') {
-                return extA.priority > extB.priority ? 1 : -1;
+                return extA.priority - extB.priority;
             }
 
             if (typeExtA === 'function' && typeExtB !== 'function') {
@@ -94,11 +96,13 @@ export class AppInsightsCore implements IAppInsightsCore {
             }
         });
 
+        this._extensions.push(this._channelController);
+
         // Check if any two extensions have the same priority, then throw error
         let priority = {};
         this._extensions.forEach(ext => {
             let t = (<ITelemetryPlugin>ext);
-            if (t && t.priority) { 
+            if (t && t.priority) {
                 if (priority[t.priority]) {
                     throw new Error(duplicatePriority);
                 } else {
@@ -106,6 +110,9 @@ export class AppInsightsCore implements IAppInsightsCore {
                 }
             }
         });
+
+
+        this._extensions.forEach(ext => ext.initialize(this.config, this, this._extensions)); // initialize
 
         // Set next plugin for all but last extension
         for (let idx = 0; idx < this._extensions.length - 1; idx++) {
@@ -117,21 +124,15 @@ export class AppInsightsCore implements IAppInsightsCore {
             (<any>this._extensions[idx]).setNextPlugin(this._extensions[idx + 1]); // set next plugin
         }
 
-        this._extensions.forEach(ext => ext.initialize(this.config, this, this._extensions)); // initialize
 
+        if (this.getTransmissionControls().length === 0) {
+            throw new Error("No channels available");
+        }
         this._isInitialized = true;
     }
 
-    getTransmissionControl(): IChannelControls {
-        for (let i = 0; i < this._extensions.length; i++) {
-            let priority = (<any>this._extensions[i]).priority;
-            if (!CoreUtils.isNullOrUndefined(priority) && priority >= MinChannelPriorty) {
-                let firstChannel = <any>this._extensions[i];
-                return firstChannel as IChannelControls; // return first channel in list
-            }
-        }
-
-        throw new Error("No channel extension found");
+    getTransmissionControls(): Array<IChannelControls[]> {
+       return this._channelController.ChannelControls;
     }
 
     track(telemetryItem: ITelemetryItem) {
@@ -239,6 +240,54 @@ export class AppInsightsCore implements IAppInsightsCore {
 
     private _notifiyInvalidEvent(telemetryItem: ITelemetryItem): void {
         this._notificationManager.eventsDiscarded([telemetryItem], EventsDiscardedReason.InvalidEvent);
+    }
+}
+
+class ChannelController implements ITelemetryPlugin {
+
+    private channelQueue: Array<IChannelControls[]>;
+    
+    public processTelemetry (item: ITelemetryItem) {
+        this.channelQueue.forEach(queues => {
+            // pass on to first item in queue
+            queues[0].processTelemetry(item);
+        });
+    }
+
+    public get ChannelControls(): Array<IChannelControls[]> {
+        return this.channelQueue;
+    }
+
+    identifier: string = "ChannelControllerPlugin";
+
+    setNextPlugin: (next: ITelemetryPlugin) => {};
+
+    priority: number = 200; // in reserved range 100 to 200
+
+    initialize(config: IConfiguration, core: IAppInsightsCore, extensions: IPlugin[]) {
+        this.channelQueue = new Array<IChannelControls[]>();
+        if (config.channels) {
+            config.channels.forEach(queue => {
+                this.channelQueue.push(queue);
+            });
+        } else {
+            let arr = new Array<IChannelControls>();
+            extensions.forEach(ext => {
+                let e = <IChannelControls>ext;
+                if (e && e.priority > 200) {
+                    arr.push(e);
+                }
+            });
+
+            if (arr.length > 0) {
+                // sort if not sorted
+                arr = arr.sort((a,b) => {
+                    return a.priority - b.priority;
+                });
+                
+                this.channelQueue.push(arr);
+            }
+        }
     }
 }
 

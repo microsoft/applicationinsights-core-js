@@ -1,4 +1,5 @@
 import { ITelemetryPlugin } from "./ITelemetryPlugin";
+import { IChannelControls } from "./IChannelControls";
 
 "use strict";
 
@@ -67,4 +68,9 @@ export interface IConfiguration {
      * Additional plugins that should be loaded by core at runtime
      */
     extensions?: ITelemetryPlugin[];
+
+    /**
+     * Additional plugins that should be loaded by core at runtime
+     */
+    channels?: Array<IChannelControls[]>;
 }

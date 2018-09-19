@@ -64,7 +64,7 @@ export class ApplicationInsightsCoreTests extends TestClass {
                 samplingPlugin.priority = 20;
 
                 let channelPlugin = new ChannelPlugin();
-                channelPlugin.priority = 120;
+                channelPlugin.priority = 201;
                 // Assert prior to initialize
                 Assert.ok(!samplingPlugin.nexttPlugin, "Not setup prior to pipeline initialization");
 
@@ -87,7 +87,7 @@ export class ApplicationInsightsCoreTests extends TestClass {
                 samplingPlugin1.priority = 20;
 
                 let channelPlugin = new ChannelPlugin();
-                channelPlugin.priority = 120;
+                channelPlugin.priority = 201;
 
                 let appInsightsCore = new AppInsightsCore();
                 try {
@@ -110,7 +110,9 @@ export class ApplicationInsightsCoreTests extends TestClass {
                     [channelPlugin]);
                 
                 Assert.ok(!channelPlugin.isFlushInvoked, "Flush not called on initialize");
-                appInsightsCore.getTransmissionControl().flush(true);
+                appInsightsCore.getTransmissionControls().forEach(queues => {
+                    queues.forEach(q => q.flush(true));
+                });
 
                 Assert.ok(channelPlugin.isFlushInvoked, "Flush triggered for channel");
             }
@@ -300,7 +302,7 @@ export class ApplicationInsightsCoreTests extends TestClass {
                 samplingPlugin.priority = 20;
 
                 let channelPlugin = new ChannelPlugin();
-                channelPlugin.priority = 120;
+                channelPlugin.priority = 201;
 
                 let appInsightsCore = new AppInsightsCore();
                 try {
@@ -311,7 +313,14 @@ export class ApplicationInsightsCoreTests extends TestClass {
                     Assert.ok(false, "No error expected");
                 }
 
-                Assert.ok((<any>appInsightsCore)._extensions.length === 2, "Extensions can be provided through overall configuration");
+                let found = false;
+                (<any>appInsightsCore)._extensions.forEach(ext => {
+                    if (ext.identifier === samplingPlugin.identifier) {
+                        found = true;
+                    }
+                });
+
+                Assert.ok(found, "Plugin pased in through config is part of pipeline");
             }
         });
 
@@ -324,7 +333,7 @@ export class ApplicationInsightsCoreTests extends TestClass {
                 let testPlugin = new TestPlugin();
 
                 let channelPlugin = new ChannelPlugin();
-                channelPlugin.priority = 120;
+                channelPlugin.priority = 201;
 
                 let appInsightsCore = new AppInsightsCore();
                 try {
@@ -410,10 +419,11 @@ class ChannelPlugin implements IChannelControls {
 
     public identifier = "Sender";
     
-    setNextPlugin: (next: ITelemetryPlugin) => {
+    setNextPlugin(next: ITelemetryPlugin) {
+        // no next setup
     }
 
-    public priority: number = 101;
+    public priority: number = 201;
 
     public initialize = (config: IConfiguration) => {
     }
