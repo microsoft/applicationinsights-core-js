@@ -11,13 +11,13 @@ export interface IDiagnosticLogger {
     
     /**
      * 0: OFF
-     * 1: only critical
+     * 1: only critical (default)
      * 2: critical + info
      */
     consoleLoggingLevel: () => number;
 
     /**
-     * 0: OFF
+     * 0: OFF (default)
      * 1: CRITICAL
      * 2: WARNING
      */
