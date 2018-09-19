@@ -6,7 +6,7 @@ import { IConfiguration, ITelemetryPlugin, ITelemetryItem, IPlugin } from "../..
 import { AppInsightsCore } from "../../JavaScriptSDK/AppInsightsCore";
 import { IChannelControls } from "../../JavaScriptSDK.Interfaces/IChannelControls";
 import { _InternalMessageId, LoggingSeverity } from "../../JavaScriptSDK.Enums/LoggingEnums";
-import { _InternalLogMessage } from "../../JavaScriptSDK/DiagnosticLogger";
+import { _InternalLogMessage, DiagnosticLogger } from "../../JavaScriptSDK/DiagnosticLogger";
 
 export class ApplicationInsightsCoreTests extends TestClass {
 
@@ -119,6 +119,32 @@ export class ApplicationInsightsCoreTests extends TestClass {
         });
 
         this.testCase({
+            name: 'ApplicationInsightsCore: track adds required default fields if missing',
+            test: () => {
+                const expectedIKey: string = "09465199-12AA-4124-817F-544738CC7C41";
+                const expectedTimestamp = new Date();
+                const expectedBaseType = "EventData";
+
+                const channelPlugin = new ChannelPlugin();
+                const appInsightsCore = new AppInsightsCore();
+                appInsightsCore.initialize({instrumentationKey: expectedIKey}, [channelPlugin]);
+                const validateStub = this.sandbox.stub(appInsightsCore, "_validateTelmetryItem");
+
+                // Act
+                let bareItem: ITelemetryItem = {name: 'test item'};
+                appInsightsCore.track(bareItem);
+                this.clock.tick(1);
+
+                // Test
+                Assert.ok(validateStub.calledOnce, "validateTelemetryItem called");
+                const newItem: ITelemetryItem = validateStub.args[0][0];
+                Assert.equal(expectedIKey, newItem.instrumentationKey, "Instrumentation key is added");
+                Assert.equal(expectedBaseType, newItem.baseType, "BaseType is added");
+                Assert.deepEqual(expectedTimestamp, newItem.timestamp, "Timestamp is added");
+            }
+        });
+
+        this.testCase({
             name: "DiagnosticLogger: Critical logging history is saved",
             test: () => {
                 // Setup
@@ -135,6 +161,30 @@ export class ApplicationInsightsCoreTests extends TestClass {
 
                 // Act
                 appInsightsCore.logger.throwInternal(LoggingSeverity.CRITICAL, messageId, "Test Error");
+
+                // Test postcondition
+                Assert.ok(appInsightsCore.logger['_messageCount'] === 1, 'POST: Logging success');
+                Assert.ok(appInsightsCore.logger['_messageLogged'][messageKey], "POST: Correct messageId logged");
+            }
+        });
+
+        this.testCase({
+            name: 'DiagnosticLogger: Logger can be created with default constructor',
+            test: () => {
+                // setup
+                const channelPlugin = new ChannelPlugin();
+                const appInsightsCore = new AppInsightsCore();
+                appInsightsCore.initialize({instrumentationKey: "09465199-12AA-4124-817F-544738CC7C41"}, [channelPlugin]);
+                appInsightsCore.logger = new DiagnosticLogger();
+
+                const messageId: _InternalMessageId = _InternalMessageId.CannotAccessCookie; // can be any id
+                const messageKey = appInsightsCore.logger['AIInternalMessagePrefix'] + messageId;
+
+                // Verify precondition
+                Assert.ok(appInsightsCore.logger['_messageCount'] === 0, 'PRE: No internal logging performed yet');
+
+                // Act
+                appInsightsCore.logger.throwInternal(LoggingSeverity.CRITICAL, messageId, "Some message");
 
                 // Test postcondition
                 Assert.ok(appInsightsCore.logger['_messageCount'] === 1, 'POST: Logging success');

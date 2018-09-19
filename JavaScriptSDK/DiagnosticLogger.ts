@@ -3,6 +3,7 @@ import { IConfiguration } from "../JavaScriptSDK.Interfaces/IConfiguration"
 import { _InternalMessageId, LoggingSeverity } from "../JavaScriptSDK.Enums/LoggingEnums";
 import { IDiagnosticLogger } from "../JavaScriptSDK.Interfaces/IDiagnosticLogger";
 import { CoreUtils } from "./CoreUtils";
+import { AppInsightsCore } from "./AppInsightsCore";
 
 export class _InternalLogMessage{
     public message: string;
@@ -86,6 +87,13 @@ export class DiagnosticLogger implements IDiagnosticLogger {
     private _messageLogged: { [type: number]: boolean } = {};
 
     constructor(config?: IConfiguration) {
+        if (CoreUtils.isNullOrUndefined(config)) {
+            // TODO: Use default config
+            // config = AppInsightsCore.defaultConfig;
+
+            // For now, use defaults specified in DiagnosticLogger members;
+            return;
+        }
         if (!CoreUtils.isNullOrUndefined(config.loggingLevelConsole)) {
             this.consoleLoggingLevel = () => { return config.loggingLevelConsole };
         }
