@@ -98,12 +98,12 @@ export class AppInsightsCore implements IAppInsightsCore {
 
         this._extensions.push(this._channelController);
 
-        // Check if any two extensions have the same priority, then throw error
+        // Check if any two extensions have the same priority, then throw console warning
         let priority = {};
         this._extensions.forEach(ext => {
             let t = (<ITelemetryPlugin>ext);
             if (t && t.priority) {
-                if (priority[t.priority]) {
+                if (!CoreUtils.isNullOrUndefined(priority[t.priority])) {
                     this.logger.warnToConsole("Two extensions have same priority" + priority[t.priority] + ", " + t.identifier);
                 } else {
                     priority[t.priority] = t.identifier; // set a value
