@@ -94,8 +94,10 @@ export class ApplicationInsightsCoreTests extends TestClass {
                 appInsightsCore.initialize(
                     {instrumentationKey: "09465199-12AA-4124-817F-544738CC7C41"}, 
                     [samplingPlugin, samplingPlugin1, channelPlugin]);
+
+                Assert.ok("No error on dupicate priority");
                 } catch (error) {
-                    Assert.ok(error.message.indexOf("priority") >= 0, "Priority cannot be the same");
+                    Assert.ok(false); // duplicate priority does not throw error
                 }
             }
         });

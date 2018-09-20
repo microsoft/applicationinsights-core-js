@@ -104,9 +104,9 @@ export class AppInsightsCore implements IAppInsightsCore {
             let t = (<ITelemetryPlugin>ext);
             if (t && t.priority) {
                 if (priority[t.priority]) {
-                    throw new Error(duplicatePriority);
+                    this.logger.warnToConsole("Two extensions have same priority" + priority[t.priority] + ", " + t.identifier);
                 } else {
-                    priority[t.priority] = 1; // set a value
+                    priority[t.priority] = t.identifier; // set a value
                 }
             }
         });
