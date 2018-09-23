@@ -9,7 +9,6 @@ import { CoreUtils } from "./CoreUtils";
 import { NotificationManager } from "./NotificationManager";
 import { IDiagnosticLogger } from "../JavaScriptSDK.Interfaces/IDiagnosticLogger";
 import { _InternalLogMessage, DiagnosticLogger } from "./DiagnosticLogger";
-import { _InternalMessageId } from "../JavaScriptSDK.Enums/LoggingEnums";
 
 "use strict";
 
@@ -34,11 +33,6 @@ export class AppInsightsCore implements IAppInsightsCore {
         // Make sure core is only initialized once
         if (this._isInitialized) {
             throw Error("Core should not be initialized more than once");
-        }
-
-        if (!extensions || extensions.length === 0) {
-            // throw error
-            throw Error("At least one extension channel is required");
         }
 
         if (!config || CoreUtils.isNullOrUndefined(config.instrumentationKey)) {
@@ -114,11 +108,18 @@ export class AppInsightsCore implements IAppInsightsCore {
 
         this._extensions.forEach(ext => ext.initialize(this.config, this, this._extensions)); // initialize
 
+        
         // Set next plugin for all but last extension
         for (let idx = 0; idx < this._extensions.length - 1; idx++) {
-            if (this._extensions[idx] && typeof (<any>this._extensions[idx]).processTelemetry !== 'function') {
+            let curr = <ITelemetryPlugin>(this._extensions[idx]);
+            let next = <ITelemetryPlugin>(this._extensions[idx + 1]);
+            if (curr && typeof curr.processTelemetry !== 'function') {
                 // these are initialized only, allowing an entry point for extensions to be initialized when SDK initializes
                 continue;
+            }
+
+            if (curr.priority === 200) {
+                break; // channel controller will set remaining pipeline
             }
 
             (<any>this._extensions[idx]).setNextPlugin(this._extensions[idx + 1]); // set next plugin
@@ -250,7 +251,9 @@ class ChannelController implements ITelemetryPlugin {
     public processTelemetry (item: ITelemetryItem) {
         this.channelQueue.forEach(queues => {
             // pass on to first item in queue
-            queues[0].processTelemetry(item);
+            if (queues.length > 0) {
+                queues[0].processTelemetry(item);
+            }
         });
     }
 
@@ -260,21 +263,34 @@ class ChannelController implements ITelemetryPlugin {
 
     identifier: string = "ChannelControllerPlugin";
 
-    setNextPlugin: (next: ITelemetryPlugin) => {};
+    setNextPlugin: (next: ITelemetryPlugin) => {}; // channel controller is last in pipeline
 
-    priority: number = 200; // in reserved range 100 to 200
+    priority: number = ChannelControllerPriority; // in reserved range 100 to 200
 
     initialize(config: IConfiguration, core: IAppInsightsCore, extensions: IPlugin[]) {
         this.channelQueue = new Array<IChannelControls[]>();
         if (config.channels) {
             config.channels.forEach(queue => {
-                this.channelQueue.push(queue);
+                if(queue && queue.length > 0) {
+                    queue = queue.sort((a,b) => { // sort based on priority within each queue
+                        return a.priority - b.priority;
+                    });
+                    
+                    // Initialize each plugin
+                    queue.forEach(queueItem => queueItem.initialize(config, core, extensions));
+
+                    for (let i = 1; i < queue.length; i++) {
+                        queue[i - 1].setNextPlugin(queue[i]); // setup processing chain
+                    }
+
+                    this.channelQueue.push(queue);
+                }
             });
         } else {
             let arr = new Array<IChannelControls>();
             extensions.forEach(ext => {
                 let e = <IChannelControls>ext;
-                if (e && e.priority > 200) {
+                if (e && e.priority > ChannelControllerPriority) {
                     arr.push(e);
                 }
             });
@@ -284,6 +300,13 @@ class ChannelController implements ITelemetryPlugin {
                 arr = arr.sort((a,b) => {
                     return a.priority - b.priority;
                 });
+
+                // Initialize each plugin
+                arr.forEach(queueItem => queueItem.initialize(config, core, extensions));
+
+                for (let i = 1; i < arr.length - 1; i++) {
+                    arr[i -1].setNextPlugin(arr[i]);
+                }
                 
                 this.channelQueue.push(arr);
             }
@@ -292,4 +315,4 @@ class ChannelController implements ITelemetryPlugin {
 }
 
 const validationError = "Extensions must provide callback to initialize";    
-const duplicatePriority = "One or more extensions are set at same priority";
+const ChannelControllerPriority = 200;

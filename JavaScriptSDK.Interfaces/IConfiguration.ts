@@ -70,7 +70,7 @@ export interface IConfiguration {
     extensions?: ITelemetryPlugin[];
 
     /**
-     * Additional plugins that should be loaded by core at runtime
+     * Channel queues that is setup by customer in desired order
      */
     channels?: Array<IChannelControls[]>;
 }
