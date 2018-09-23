@@ -70,7 +70,7 @@ export interface IConfiguration {
     extensions?: ITelemetryPlugin[];
 
     /**
-     * Channel queues that is setup by customer in desired order
+     * Channel queues that is setup by caller in desired order
      */
     channels?: Array<IChannelControls[]>;
 }

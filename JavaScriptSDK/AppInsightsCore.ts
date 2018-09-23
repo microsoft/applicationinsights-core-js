@@ -316,3 +316,4 @@ class ChannelController implements ITelemetryPlugin {
 
 const validationError = "Extensions must provide callback to initialize";    
 const ChannelControllerPriority = 200;
+const duplicatePriority = "One or more extensions are set at same priority";
