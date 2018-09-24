@@ -9,6 +9,7 @@ import { CoreUtils } from "./CoreUtils";
 import { NotificationManager } from "./NotificationManager";
 import { IDiagnosticLogger } from "../JavaScriptSDK.Interfaces/IDiagnosticLogger";
 import { _InternalLogMessage, DiagnosticLogger } from "./DiagnosticLogger";
+import { ApplicationInsightsCoreTests } from "../JavaScriptSDK.Tests/Selenium/ApplicationInsightsCore.Tests";
 
 "use strict";
 
@@ -69,9 +70,12 @@ export class AppInsightsCore implements IAppInsightsCore {
             if (!isValid) {
                 throw Error(validationError);
             }
-        }        
+        }
+        // Initial validation complete
 
-        this._extensions = extensions.concat(this.config.extensions).sort((a, b) => {
+        // Concat all available extensions before sorting by priority
+        this._extensions.push(this._channelController, ...extensions, ...this.config.extensions);
+        this._extensions = this._extensions.sort((a, b) => {
             let extA = (<ITelemetryPlugin>a);
             let extB = (<ITelemetryPlugin>b);
             let typeExtA = typeof extA.processTelemetry;
@@ -89,10 +93,9 @@ export class AppInsightsCore implements IAppInsightsCore {
                 return -1;
             }
         });
+        // sort complete
 
-        this._extensions.push(this._channelController);
-
-        // Check if any two extensions have the same priority, then throw error
+        // Check if any two extensions have the same priority, then warn to console
         let priority = {};
         this._extensions.forEach(ext => {
             let t = (<ITelemetryPlugin>ext);
@@ -105,26 +108,35 @@ export class AppInsightsCore implements IAppInsightsCore {
             }
         });
 
-
-        this._extensions.forEach(ext => ext.initialize(this.config, this, this._extensions)); // initialize
-
+        // initialize plugins including channel controller
+        this._extensions.forEach(ext => {
+            let e = ext as ITelemetryPlugin;
+            if (e && e.priority <= ChannelControllerPriority) {
+                ext.initialize(this.config, this, this._extensions); // initialize
+            }
+        });
         
-        // Set next plugin for all but last extension
+        let c = -1;
+        // Set next plugin for all until channel controller
         for (let idx = 0; idx < this._extensions.length - 1; idx++) {
             let curr = <ITelemetryPlugin>(this._extensions[idx]);
-            let next = <ITelemetryPlugin>(this._extensions[idx + 1]);
             if (curr && typeof curr.processTelemetry !== 'function') {
                 // these are initialized only, allowing an entry point for extensions to be initialized when SDK initializes
                 continue;
             }
 
-            if (curr.priority === 200) {
+            if (curr.priority === ChannelControllerPriority) {
+                c = idx + 1;
                 break; // channel controller will set remaining pipeline
             }
 
             (<any>this._extensions[idx]).setNextPlugin(this._extensions[idx + 1]); // set next plugin
         }
 
+        // Remove sender channels from main list
+        if (c < this._extensions.length) {
+            this._extensions.splice(c);
+        }
 
         if (this.getTransmissionControls().length === 0) {
             throw new Error("No channels available");
@@ -288,12 +300,13 @@ class ChannelController implements ITelemetryPlugin {
             });
         } else {
             let arr = new Array<IChannelControls>();
-            extensions.forEach(ext => {
-                let e = <IChannelControls>ext;
-                if (e && e.priority > ChannelControllerPriority) {
-                    arr.push(e);
+
+            for (let i = 0; i < extensions.length; i++) {
+                let plugin = <IChannelControls>extensions[i];
+                if (plugin.priority > ChannelControllerPriority) {
+                    arr.push(plugin);
                 }
-            });
+            }
 
             if (arr.length > 0) {
                 // sort if not sorted
@@ -304,6 +317,7 @@ class ChannelController implements ITelemetryPlugin {
                 // Initialize each plugin
                 arr.forEach(queueItem => queueItem.initialize(config, core, extensions));
 
+                // setup next plugin
                 for (let i = 1; i < arr.length - 1; i++) {
                     arr[i -1].setNextPlugin(arr[i]);
                 }
