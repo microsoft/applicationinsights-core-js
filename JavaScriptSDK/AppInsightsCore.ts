@@ -318,8 +318,8 @@ class ChannelController implements ITelemetryPlugin {
                 arr.forEach(queueItem => queueItem.initialize(config, core, extensions));
 
                 // setup next plugin
-                for (let i = 1; i < arr.length - 1; i++) {
-                    arr[i -1].setNextPlugin(arr[i]);
+                for (let i = 1; i < arr.length; i++) {
+                    arr[i - 1].setNextPlugin(arr[i]);
                 }
                 
                 this.channelQueue.push(arr);

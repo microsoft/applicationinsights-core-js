@@ -383,6 +383,37 @@ export class ApplicationInsightsCoreTests extends TestClass {
                     Assert.ok(channelPlugin3._nextPlugin === undefined);
             }
         });
+
+        this.testCase({
+            name: 'ApplicationInsightsCore: user can add two channels in single queue',
+            test: () => {
+                let channelPlugin1 = new ChannelPlugin();
+                channelPlugin1.priority = 201;
+
+                let channelPlugin2 = new ChannelPlugin();
+                channelPlugin2.priority = 202;
+
+                let channelPlugin3 = new ChannelPlugin();
+                channelPlugin3.priority = 203;
+
+                let appInsightsCore = new AppInsightsCore();
+                appInsightsCore.initialize(
+                    {
+                        instrumentationKey: "09465199-12AA-4124-817F-544738CC7C41"
+                    },
+                    [channelPlugin1, channelPlugin2, channelPlugin3]);
+
+                    Assert.ok(channelPlugin1._nextPlugin === channelPlugin2);
+                    Assert.ok(channelPlugin2._nextPlugin === channelPlugin3);
+                    Assert.ok(CoreUtils.isNullOrUndefined(channelPlugin3._nextPlugin));
+                    let channelControls = appInsightsCore.getTransmissionControls();
+                    Assert.ok(channelControls.length === 1);
+                    Assert.ok(channelControls[0].length ===3);
+                    Assert.ok(channelControls[0][0] === channelPlugin1);
+                    Assert.ok(channelControls[0][1] === channelPlugin2);
+                    Assert.ok(channelControls[0][2] === channelPlugin3);
+            }
+        });
     }
 }
 
