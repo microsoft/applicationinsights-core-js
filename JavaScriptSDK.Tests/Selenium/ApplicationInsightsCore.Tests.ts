@@ -2,7 +2,7 @@
 /// <reference path="../../JavaScriptSDK/AppInsightsCore.ts" />
 /// <reference path="../../applicationinsights-core-js.ts" />
 
-import { IConfiguration, ITelemetryPlugin, ITelemetryItem, IPlugin } from "../../applicationinsights-core-js"
+import { IConfiguration, ITelemetryPlugin, ITelemetryItem, IPlugin, CoreUtils } from "../../applicationinsights-core-js"
 import { AppInsightsCore } from "../../JavaScriptSDK/AppInsightsCore";
 import { IChannelControls } from "../../JavaScriptSDK.Interfaces/IChannelControls";
 import { _InternalMessageId, LoggingSeverity } from "../../JavaScriptSDK.Enums/LoggingEnums";
@@ -78,7 +78,7 @@ export class ApplicationInsightsCoreTests extends TestClass {
 
 
         this.testCase({
-            name: "ApplicationInsightsCore: Plugins cannot be added with same priority",
+            name: "ApplicationInsightsCore: Plugins can be added with same priority",
             test: () => {
                 let samplingPlugin = new TestSamplingPlugin();
                 samplingPlugin.priority = 20;
@@ -349,6 +349,71 @@ export class ApplicationInsightsCoreTests extends TestClass {
                 Assert.ok(typeof ((<any>appInsightsCore)._extensions[0].processTelemetry) !== 'function', "Extensions can be provided through overall configuration");
             }
         });
+
+        this.testCase({
+            name: "Channels can be passed in through configuration",
+            test: () => {
+
+                let channelPlugin1 = new ChannelPlugin();
+                channelPlugin1.priority = 201;
+
+                let channelPlugin2 = new ChannelPlugin();
+                channelPlugin2.priority = 202;
+
+                let channelPlugin3 = new ChannelPlugin();
+                channelPlugin3.priority = 201;
+
+                let appInsightsCore = new AppInsightsCore();
+                appInsightsCore.initialize(
+                    {
+                        instrumentationKey: "09465199-12AA-4124-817F-544738CC7C41",
+                        channels: [[channelPlugin1, channelPlugin2], [channelPlugin3]]
+                    },
+                    []);
+
+                    Assert.ok(channelPlugin1._nextPlugin === channelPlugin2);
+                    Assert.ok(CoreUtils.isNullOrUndefined(channelPlugin3._nextPlugin));
+                    let channelControls = appInsightsCore.getTransmissionControls();
+                    Assert.ok(channelControls.length === 2);
+                    Assert.ok(channelControls[0].length ===2);
+                    Assert.ok(channelControls[1].length === 1);
+                    Assert.ok(channelControls[0][0] === channelPlugin1);
+                    Assert.ok(channelControls[1][0] === channelPlugin3);
+                    Assert.ok(channelPlugin2._nextPlugin === undefined);
+                    Assert.ok(channelPlugin3._nextPlugin === undefined);
+            }
+        });
+
+        this.testCase({
+            name: 'ApplicationInsightsCore: user can add two channels in single queue',
+            test: () => {
+                let channelPlugin1 = new ChannelPlugin();
+                channelPlugin1.priority = 201;
+
+                let channelPlugin2 = new ChannelPlugin();
+                channelPlugin2.priority = 202;
+
+                let channelPlugin3 = new ChannelPlugin();
+                channelPlugin3.priority = 203;
+
+                let appInsightsCore = new AppInsightsCore();
+                appInsightsCore.initialize(
+                    {
+                        instrumentationKey: "09465199-12AA-4124-817F-544738CC7C41"
+                    },
+                    [channelPlugin1, channelPlugin2, channelPlugin3]);
+
+                    Assert.ok(channelPlugin1._nextPlugin === channelPlugin2);
+                    Assert.ok(channelPlugin2._nextPlugin === channelPlugin3);
+                    Assert.ok(CoreUtils.isNullOrUndefined(channelPlugin3._nextPlugin));
+                    let channelControls = appInsightsCore.getTransmissionControls();
+                    Assert.ok(channelControls.length === 1);
+                    Assert.ok(channelControls[0].length ===3);
+                    Assert.ok(channelControls[0][0] === channelPlugin1);
+                    Assert.ok(channelControls[0][1] === channelPlugin2);
+                    Assert.ok(channelControls[0][2] === channelPlugin3);
+            }
+        });
     }
 }
 
@@ -389,7 +454,7 @@ class TestSamplingPlugin implements ITelemetryPlugin {
 }
 
 class ChannelPlugin implements IChannelControls {
-
+    public _nextPlugin: ITelemetryPlugin;
     public isFlushInvoked = false;
     public isTearDownInvoked = false;
     public isResumeInvoked = false;
@@ -422,7 +487,7 @@ class ChannelPlugin implements IChannelControls {
     public identifier = "Sender";
     
     setNextPlugin(next: ITelemetryPlugin) {
-        // no next setup
+        this._nextPlugin = next;
     }
 
     public priority: number = 201;
