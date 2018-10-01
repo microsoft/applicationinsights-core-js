@@ -9,6 +9,14 @@ module.exports = function (grunt) {
             core: ['./amd/bundle/**', './JavaScriptSDK.Tests/Selenium/aicore.tests*', 'node_modules/*'],
             corecjs: ['./cjs/bundle/**', './JavaScriptSDK.Tests/Selenium/aicore.tests*', 'node_modules/*']
         },
+        tslint: {
+            options: {
+                rulesDirectory: 'node_modules/tslint-microsoft-contrib',
+            },
+            files: {
+                src: ['./**/*.ts', '!./**/node_modules/**/*.ts', '!./JavaScriptSDK.Tests/**/*.ts'],
+            }
+        },
         ts: {
             options: {
                 comments: true
@@ -16,13 +24,8 @@ module.exports = function (grunt) {
             corecjs: {
                 tsconfig: './cjs/tsconfigcommonjs.json',
                 src: [
-                    './JavaScriptSDK.Interfaces/IConfiguration.ts',
-                    './JavaScriptSDK.Interfaces/IChannelControls.ts',
-                    './JavaScriptSDK.Interfaces/ITelemetryPlugin.ts',
-                    './JavaScriptSDK.Interfaces/ITelemetryItem.ts',
-                    './JavaScriptSDK.Interfaces/IAppInsightsCore.ts',
-                    './JavaScriptSDK.Interfaces/CoreUtils.ts',
-                    './JavaScriptSDK/AppInsightsCore.ts',
+                    './JavaScriptSDK.Interfaces/*.ts',
+                    './JavaScriptSDK/*.ts',
                     './applicationinsights-core-js.ts'
                 ]
             },
@@ -65,6 +68,7 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks("grunt-ts");
     grunt.loadNpmTasks('grunt-contrib-qunit');
+    grunt.loadNpmTasks('grunt-tslint');
     grunt.registerTask("core", ["ts:core"]);
     grunt.registerTask("corecjs", ["ts:corecjs"])
     grunt.registerTask("coretest", ["ts:core", "ts:coretest", "qunit:core"]);
