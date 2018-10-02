@@ -84,7 +84,7 @@ export class DiagnosticLogger implements IDiagnosticLogger {
     /**
      * Holds information about what message types were already logged to console or sent to server.
      */
-    private _messageLogged: { [type: number]: boolean } = {};
+    private _messageLogged: { [msg: number]: boolean } = {};
 
     constructor(config?: IConfiguration) {
         if (CoreUtils.isNullOrUndefined(config)) {
