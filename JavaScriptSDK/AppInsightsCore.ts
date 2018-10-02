@@ -107,14 +107,6 @@ export class AppInsightsCore implements IAppInsightsCore {
                 }
             }
         });
-
-        // initialize plugins including channel controller
-        this._extensions.forEach(ext => {
-            let e = ext as ITelemetryPlugin;
-            if (e && e.priority <= ChannelControllerPriority) {
-                ext.initialize(this.config, this, this._extensions); // initialize
-            }
-        });
         
         let c = -1;
         // Set next plugin for all until channel controller
@@ -132,6 +124,17 @@ export class AppInsightsCore implements IAppInsightsCore {
 
             (<any>this._extensions[idx]).setNextPlugin(this._extensions[idx + 1]); // set next plugin
         }
+
+        // initialize channel controller first, this will initialize all channel plugins
+        this._channelController.initialize(this.config, this, this._extensions);
+        
+        // initialize remaining regular plugins
+        this._extensions.forEach(ext => {
+            let e = ext as ITelemetryPlugin;
+            if (e && e.priority < ChannelControllerPriority) {
+                ext.initialize(this.config, this, this._extensions); // initialize
+            }
+        });
 
         // Remove sender channels from main list
         if (c < this._extensions.length) {
@@ -316,13 +319,13 @@ class ChannelController implements ITelemetryPlugin {
 
                 // Initialize each plugin
                 arr.forEach(queueItem => queueItem.initialize(config, core, extensions));
-
+                
                 // setup next plugin
                 for (let i = 1; i < arr.length; i++) {
                     arr[i - 1].setNextPlugin(arr[i]);
                 }
-                
-                this.channelQueue.push(arr);
+
+                               this.channelQueue.push(arr);
             }
         }
     }
