@@ -9,7 +9,6 @@ import { CoreUtils } from "./CoreUtils";
 import { NotificationManager } from "./NotificationManager";
 import { IDiagnosticLogger } from "../JavaScriptSDK.Interfaces/IDiagnosticLogger";
 import { _InternalLogMessage, DiagnosticLogger } from "./DiagnosticLogger";
-import { ApplicationInsightsCoreTests } from "../JavaScriptSDK.Tests/Selenium/ApplicationInsightsCore.Tests";
 
 "use strict";
 
