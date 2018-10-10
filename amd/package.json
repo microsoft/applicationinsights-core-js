@@ -16,8 +16,5 @@
         "tslint": "^5.11.0",
         "tslint-microsoft-contrib": "^5.2.1",
         "typescript": "2.5.3"
-    },
-    "publishConfig": {
-        "registry": "https://mseng.pkgs.visualstudio.com/_packaging/ApplicationInsights-Team/npm/registry"
     }
 }
