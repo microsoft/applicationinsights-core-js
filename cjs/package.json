@@ -13,8 +13,5 @@
         "typescript": "2.5.3"
     },    
     "main": "bundle/applicationinsights-core-js.js",
-    "types": "bundle/applicationinsights-core-js.d.ts",
-    "publishConfig": {
-    	"registry": "https://mseng.pkgs.visualstudio.com/_packaging/ApplicationInsights-Team/npm/registry"
-    }
+    "types": "bundle/applicationinsights-core-js.d.ts"
 }
