@@ -1,4 +1,6 @@
-# Applicationinsights corejs [![Build Status](https://travis-ci.org/Microsoft/applicationinsights-core-js.svg?branch=master)](https://travis-ci.org/Microsoft/applicationinsights-core-js) [![Build status](https://dev.azure.com/mseng/AppInsights/_apis/build/status/AppInsights%20-%20DevTools/1DS%20JavaScript%20SDK%20-%20Core)](https://dev.azure.com/mseng/AppInsights/_build/latest?definitionId=7605)
+# Microsoft Application Insights JavaScript SDK - Core
+
+[![Build Status](https://travis-ci.org/Microsoft/applicationinsights-core-js.svg?branch=master)](https://travis-ci.org/Microsoft/applicationinsights-core-js) [![Build status](https://dev.azure.com/mseng/AppInsights/_apis/build/status/AppInsights%20-%20DevTools/1DS%20JavaScript%20SDK%20-%20Core)](https://dev.azure.com/mseng/AppInsights/_build/latest?definitionId=7605)
 
 Core SDK layer for next version of application insights javascript SDK.
 
@@ -65,4 +67,4 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 
 ## License
 
-MIT
+[MIT](LICENSE)
