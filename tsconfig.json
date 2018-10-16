@@ -4,11 +4,21 @@
     "inlineSources": true,
     "noImplicitAny": false,
     "module": "amd",
+    "moduleResolution": "node",
     "target": "es5",
+    "forceConsistentCasingInFileNames": true,
+    "importHelpers": true,
     "alwaysStrict": true,
     "declaration": true,
+    "declarationMap": true,
     "outDir": "amd/bundle",
-    "rootDir": "./"
+    "rootDir": "./",
+    "suppressImplicitAnyIndexErrors": true
   },
-  "files": []
+  "include": [
+    "./JavaScriptSDK/**/*",
+    "./JavaScriptSDK.Enums/**/*",
+    "./JavaScriptSDK.Interfaces/**/*"
+  ],
+  "excludes": ["node_modules"]
 }
