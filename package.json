@@ -1,7 +1,7 @@
 {
     "name": "applicationinsights-core-js",
     "author": "Microsoft Corporation",
-    "version": "0.0.93",
+    "version": "0.0.93-beta",
     "description": "Microsoft Application Insights Core Javascript SDK",
     "keywords": [
         "azure",
