@@ -1,3 +1,5 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 export enum LoggingSeverity {
     /**
      * Error will be sent as internal telemetry
