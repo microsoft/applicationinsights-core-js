@@ -30,12 +30,7 @@ module.exports = function (grunt) {
                 ]
             },
             core: {
-                tsconfig: './tsconfig.json',
-                src: [
-                    './JavaScriptSDK.Interfaces/*.ts',
-                    './JavaScriptSDK/*.ts',
-                    './applicationinsights-core-js.ts'
-                ]
+                tsconfig: './tsconfig.json'
             },
             coretest: {
                 tsconfig: './JavaScriptSDK.Tests/tsconfig.json',
