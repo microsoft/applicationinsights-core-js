@@ -1,5 +1,5 @@
 {
-    "name": "applicationinsights-core-js",
+    "name": "applicationinsights-core-js-cjs",
     "version": "0.0.92-beta",
     "description": "Microsoft Application Insights Core Javascript SDK",
     "devDependencies": {
