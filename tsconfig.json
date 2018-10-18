@@ -18,7 +18,8 @@
   "include": [
     "./JavaScriptSDK/**/*",
     "./JavaScriptSDK.Enums/**/*",
-    "./JavaScriptSDK.Interfaces/**/*"
+    "./JavaScriptSDK.Interfaces/**/*",
+    "./*"
   ],
   "excludes": ["node_modules"]
 }
