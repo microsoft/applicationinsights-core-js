@@ -1,5 +1,5 @@
 {
-    "name": "applicationinsights-core-js-amd",
+    "name": "applicationinsights-core-js",
     "author": "Microsoft Corporation",
     "version": "0.0.93-beta",
     "description": "Microsoft Application Insights Core Javascript SDK",
@@ -14,9 +14,6 @@
     ],
     "main": "bundle/applicationinsights-core-js.js",
     "types": "bundle/applicationinsights-core-js.d.ts",
-    "engines": {
-        "node": ">=6.0.0"
-    },
     "scripts": {
         "clean": "grunt clean",
         "build": "grunt core",
