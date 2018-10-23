@@ -1,0 +1,15 @@
+# NPM Ignore
+
+# ignore everything
+*
+
+# ... but these files
+!/package.json
+!/README.md
+!/LICENSE
+!/dist-esm/**
+!/typings/**
+!/browser/**
+!/src/JavaScriptSDK.Enums/**
+!/src/JavaScriptSDK.Interfaces/**
+!/src/JavaScriptSDK/**
