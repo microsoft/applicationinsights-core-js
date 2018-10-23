@@ -8,7 +8,7 @@
 !/README.md
 !/LICENSE
 !/dist-esm/**
-!/dist/**
+!/typings/**
 !/browser/**
 !/src/JavaScriptSDK.Enums/**
 !/src/JavaScriptSDK.Interfaces/**

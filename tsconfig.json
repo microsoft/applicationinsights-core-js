@@ -11,6 +11,7 @@
     "alwaysStrict": true,
     "declaration": true,
     "declarationMap": true,
+    "declarationDir": "types",
     "outDir": "./dist-esm",
     "rootDir": "./src",
     "suppressImplicitAnyIndexErrors": true

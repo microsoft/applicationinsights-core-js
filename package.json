@@ -13,7 +13,7 @@
         "web analytics"
     ],
     "main": "dist-esm/applicationinsights-core-js.js",
-    "types": "dist-esm/applicationinsights-core-js.d.ts",
+    "types": "types/applicationinsights-core-js.d.ts",
     "browser": "browser/applicationinsights-core-js.js",
     "scripts": {
         "clean": "grunt clean",
