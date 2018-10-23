@@ -6,7 +6,7 @@ module.exports = function (grunt) {
         },
         // delete bundle dirs, compiled core test files, node_modules contents (keep dir)
         clean: {
-            core: ['./src/JavaScriptSDK.Tests/Selenium/aicore.tests*', 'node_modules/*', 'dist-esm', 'browser']
+            core: ['./src/JavaScriptSDK.Tests/Selenium/aicore.tests*', 'node_modules/*', 'dist-esm', 'browser', 'types']
         },
         tslint: {
             options: {
