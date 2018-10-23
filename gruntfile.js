@@ -56,6 +56,5 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-qunit');
     grunt.loadNpmTasks('grunt-tslint');
     grunt.registerTask("core", ["ts:core"]);
-    grunt.registerTask("corecjs", ["ts:corecjs"])
     grunt.registerTask("coretest", ["ts:core", "ts:coretest", "qunit:core"]);
 };

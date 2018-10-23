@@ -3,3 +3,4 @@ node_js:
   - "10.9"
 before_script:
   - npm install grunt-cli -g
+  - npm install rollup -g
