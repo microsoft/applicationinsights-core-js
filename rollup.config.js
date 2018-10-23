@@ -1,6 +1,7 @@
 import nodeResolve from "rollup-plugin-node-resolve";
 import visualizer from "rollup-plugin-visualizer";
 import {uglify} from "rollup-plugin-uglify";
+import replace from "rollup-plugin-replace";
 
 const version = require("./package.json").version;
 const banner = [
@@ -21,6 +22,13 @@ const browserRollupConfigFactory = isProduction => {
       sourcemap: true
     },
     plugins: [
+      replace({
+        delimiters: ["", ""],
+        values: {
+          "// Copyright (c) Microsoft Corporation. All rights reserved.": "",
+          "// Licensed under the MIT License.": ""
+        }
+      }),
       nodeResolve({
         module: true,
         browser: true,
