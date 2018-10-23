@@ -3,7 +3,7 @@
     "sourceMap": true,
     "inlineSources": true,
     "noImplicitAny": false,
-    "module": "amd",
+    "module": "es6",
     "moduleResolution": "node",
     "target": "es5",
     "forceConsistentCasingInFileNames": true,
@@ -11,15 +11,15 @@
     "alwaysStrict": true,
     "declaration": true,
     "declarationMap": true,
-    "outDir": "amd/bundle",
-    "rootDir": "./",
+    "outDir": "./dist-esm",
+    "rootDir": "./src",
     "suppressImplicitAnyIndexErrors": true
   },
   "include": [
-    "./JavaScriptSDK/**/*",
-    "./JavaScriptSDK.Enums/**/*",
-    "./JavaScriptSDK.Interfaces/**/*",
-    "./*"
+    "./src/applicationinsights-core-js.ts",
+    "./src/JavaScriptSDK/**",
+    "./src/JavaScriptSDK.Enums/**",
+    "./src/JavaScriptSDK.Interfaces/**"
   ],
-  "excludes": ["node_modules"]
+  "exclude": ["node_modules/"]
 }

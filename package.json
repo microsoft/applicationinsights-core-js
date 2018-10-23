@@ -1,7 +1,7 @@
 {
     "name": "applicationinsights-core-js",
     "author": "Microsoft Corporation",
-    "version": "0.0.93-beta",
+    "version": "1.2.3",
     "description": "Microsoft Application Insights Core Javascript SDK",
     "keywords": [
         "azure",
@@ -12,24 +12,28 @@
         "browser performance monitoring",
         "web analytics"
     ],
-    "main": "bundle/applicationinsights-core-js.js",
-    "types": "bundle/applicationinsights-core-js.d.ts",
+    "main": "dist-esm/applicationinsights-core-js.js",
+    "types": "dist-esm/applicationinsights-core-js.d.ts",
+    "browser": "browser/applicationinsights-core-js.js",
     "scripts": {
         "clean": "grunt clean",
         "build": "grunt core",
         "test": "grunt coretest"
     },
+    "repository": "github:Microsoft/applicationinsights-core-js",
+    "license": "MIT",
+    "sideEffects": false,
     "devDependencies": {
         "grunt": "1.0.1",
         "grunt-contrib-clean": "^1.1.0",
         "grunt-contrib-qunit": "2.0.0",
         "grunt-ts": "^6.0.0-beta.15",
         "grunt-tslint": "^5.0.2",
+        "rollup-plugin-node-resolve": "^3.4.0",
+        "rollup-plugin-uglify": "^6.0.0",
+        "rollup-plugin-visualizer": "^0.9.2",
         "tslint": "^5.11.0",
         "tslint-microsoft-contrib": "^5.2.1",
         "typescript": "2.5.3"
-    },
-    "repository": "github:Microsoft/applicationinsights-core-js",
-    "license": "MIT",
-    "sideEffects": false
+    }
 }

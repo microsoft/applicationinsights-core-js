@@ -6,8 +6,7 @@ module.exports = function (grunt) {
         },
         // delete bundle dirs, compiled core test files, node_modules contents (keep dir)
         clean: {
-            core: ['./amd/bundle/**', './JavaScriptSDK.Tests/Selenium/aicore.tests*', 'node_modules/*'],
-            corecjs: ['./cjs/bundle/**', './JavaScriptSDK.Tests/Selenium/aicore.tests*', 'node_modules/*']
+            core: ['./src/JavaScriptSDK.Tests/Selenium/aicore.tests*', 'node_modules/*', 'dist-esm', 'browser']
         },
         tslint: {
             options: {
@@ -21,31 +20,23 @@ module.exports = function (grunt) {
             options: {
                 comments: true
             },
-            corecjs: {
-                tsconfig: './cjs/tsconfigcommonjs.json',
-                src: [
-                    './JavaScriptSDK.Interfaces/*.ts',
-                    './JavaScriptSDK/*.ts',
-                    './applicationinsights-core-js.ts'
-                ]
-            },
             core: {
                 tsconfig: './tsconfig.json'
             },
             coretest: {
-                tsconfig: './JavaScriptSDK.Tests/tsconfig.json',
+                tsconfig: './src/JavaScriptSDK.Tests/tsconfig.json',
                 src: [
-                    './JavaScriptSDK.Tests/Selenium/ApplicationInsightsCore.Tests.ts',
-                    './JavaScriptSDK.Tests/Selenium/aitests.ts'
+                    './src/JavaScriptSDK.Tests/Selenium/ApplicationInsightsCore.Tests.ts',
+                    './src/JavaScriptSDK.Tests/Selenium/aitests.ts'
                 ],
-                out: './JavaScriptSDK.Tests/Selenium/aicore.tests.js'
+                out: './src/JavaScriptSDK.Tests/Selenium/aicore.tests.js'
             }
         },
         qunit: {
             core: {
                 options: {
                     urls: [
-                        './JavaScriptSDK.Tests/Selenium/Tests.html'
+                        './src/JavaScriptSDK.Tests/Selenium/Tests.html'
                     ],
                     timeout: 300 * 1000, // 5 min
                     console: false,
