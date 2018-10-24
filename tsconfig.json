@@ -14,7 +14,8 @@
     "declarationDir": "types",
     "outDir": "./dist-esm",
     "rootDir": "./src",
-    "suppressImplicitAnyIndexErrors": true
+    "suppressImplicitAnyIndexErrors": true,
+    "allowSyntheticDefaultImports": true
   },
   "include": [
     "./src/applicationinsights-core-js.ts",

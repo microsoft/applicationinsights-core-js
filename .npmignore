@@ -5,10 +5,11 @@
 
 # ... but these files
 !/package.json
+!/tsconfig.json
 !/README.md
 !/LICENSE
 !/dist-esm/**
-!/typings/**
+!/types/**
 !/browser/**
 !/src/JavaScriptSDK.Enums/**
 !/src/JavaScriptSDK.Interfaces/**
