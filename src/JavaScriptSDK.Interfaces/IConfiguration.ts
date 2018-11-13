@@ -2,17 +2,17 @@
 // Licensed under the MIT License.
 import { ITelemetryPlugin } from "./ITelemetryPlugin";
 import { IChannelControls } from "./IChannelControls";
+import { IExtensionsConfig } from "./IExtensionsConfig";
 
 "use strict";
 
 /**
  * Configuration provided to SDK core
  */
-export interface IConfiguration {
-
+export interface IConfiguration extends IExtensionsConfig {
     /**
-    * Instrumentation key of resource
-    */
+     * Instrumentation key of resource
+     */
     instrumentationKey: string; // todo: update later for multi-tenant?
 
     /**
@@ -27,13 +27,13 @@ export interface IConfiguration {
 
     /**
      * Console logging level. All logs with a severity level higher
-     * than the configured level will be printed to console. Otherwise 
+     * than the configured level will be printed to console. Otherwise
      * they are suppressed. ie Level 2 will print both CRITICAL and
      * WARNING logs to console, level 1 prints only CRITICAL.
-     * 
-     * Note: Logs sent as telemetry to instrumentation key will also 
+     *
+     * Note: Logs sent as telemetry to instrumentation key will also
      * be logged to console if their severity meets the configured loggingConsoleLevel
-     * 
+     *
      * 0: ALL console logging off
      * 1: logs to console: severity >= CRITICAL
      * 2: logs to console: severity >= WARNING
@@ -44,26 +44,26 @@ export interface IConfiguration {
      * Telemtry logging level to instrumentation key. All logs with a severity
      * level higher than the configured level will sent as telemetry data to
      * the configured instrumentation key.
-     * 
+     *
      * 0: ALL iKey logging off
      * 1: logs to iKey: severity >= CRITICAL
      * 2: logs to iKey: severity >= WARNING
      */
-    loggingLevelTelemetry?: number
+    loggingLevelTelemetry?: number;
 
     /**
      * If enabled, uncaught exceptions will be thrown to help with debugging
      */
     enableDebugExceptions?: boolean;
-    
+
     /**
-    * Endpoint where telemetry data is sent
-    */
+     * Endpoint where telemetry data is sent
+     */
     endpointUrl?: string;
 
     /**
-    * Extension configs loaded in SDK
-    */
+     * Extension configs loaded in SDK
+     */
     extensionConfig?: { [key: string]: any }; // extension configs;
 
     /**
