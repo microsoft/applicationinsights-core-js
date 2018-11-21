@@ -224,7 +224,7 @@ export class ApplicationInsightsCoreTests extends TestClass {
                 appInsightsCore.initialize(
                     {
                         instrumentationKey: "09465199-12AA-4124-817F-544738CC7C41",
-                        diagnosticLoggingInterval: 1
+                        diagnosticLogInterval: 1
                     }, [channelPlugin]);
                 const trackTraceSpy = this.sandbox.stub(appInsightsCore, "track");
 
