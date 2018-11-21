@@ -18,7 +18,7 @@ export interface IConfiguration {
     /**
      * Polling interval (in ms) for internal logging queue
      */
-    diagnosticLoggingInterval?: number;
+    diagnosticLogInterval?: number;
 
     /**
      * Maximum number of iKey transmitted logging telemetry per page view

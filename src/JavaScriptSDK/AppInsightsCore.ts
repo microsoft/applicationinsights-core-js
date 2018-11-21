@@ -215,8 +215,9 @@ export class AppInsightsCore implements IAppInsightsCore {
      * Periodically check logger.queue for 
      */
     pollInternalLogs(): number {
-        if (!(this.config.diagnosticLoggingInterval > 0)) {
-            throw Error("config.diagnosticLoggingInterval must be a positive integer");
+        let interval = this.config.diagnosticLogInterval;
+        if (!(interval > 0)) {
+            interval = 10000;
         }
 
         return setInterval(() => {
@@ -234,7 +235,7 @@ export class AppInsightsCore implements IAppInsightsCore {
                 this.track(item);
             });
             queue.length = 0;
-        }, this.config.diagnosticLoggingInterval);
+        }, interval);
     }
 
     private _validateTelmetryItem(telemetryItem: ITelemetryItem) {
