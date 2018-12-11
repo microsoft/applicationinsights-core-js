@@ -8,22 +8,22 @@
 export interface ITelemetryItem {
     /**
      * Unique name of the telemetry item
-     */ 
+     */
     name: string;
 
     /**
      * Timestamp when item was sent
-     */ 
+     */
     timestamp?: Date;
 
     /**
      * Identifier of the resource that uniquely identifies which resource data is sent to
-     */ 
-    instrumentationKey?: string;
+     */
+    iKey?: string;
 
     /**
      * System context properties of the telemetry item, example: ip address, city etc
-     */ 
+     */
     ctx?: {[key: string]: any};
 
     tags?: Tags[];
@@ -39,8 +39,13 @@ export interface ITelemetryItem {
 
     /**
      * Based on schema for part B
-     */ 
+     */
     baseData?: { [key: string]: any };
+
+    /**
+     * CommonSchema Version of this SDK
+     */
+    ver?: number;
 
 }
 
