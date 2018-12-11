@@ -169,17 +169,17 @@ export class AppInsightsCore implements IAppInsightsCore {
             telemetryItem.baseType = "EventData";
         }
 
-        if (!telemetryItem.iKey) {
+        if (!telemetryItem.ikey) {
             // setup default ikey if not passed in
-            telemetryItem.iKey = this.config.instrumentationKey;
+            telemetryItem.ikey = this.config.instrumentationKey;
         }
-        if (!telemetryItem.timestamp) {
+        if (!telemetryItem.time) {
             // add default timestamp if not passed in
-            telemetryItem.timestamp = new Date();
+            telemetryItem.time = new Date();
         }
         if (CoreUtils.isNullOrUndefined(telemetryItem.ver)) {
             // CommonSchema 4.0
-            telemetryItem.ver = 4.0;
+            telemetryItem.ver = "4.0";
         }
 
         // do basic validation before sending it through the pipeline
@@ -230,8 +230,8 @@ export class AppInsightsCore implements IAppInsightsCore {
             queue.forEach((logMessage: _InternalLogMessage) => {
                 const item: ITelemetryItem = {
                     name: "InternalMessageId: " + logMessage.messageId,
-                    iKey: this.config.instrumentationKey,
-                    timestamp: new Date(),
+                    ikey: this.config.instrumentationKey,
+                    time: new Date(),
                     baseType: _InternalLogMessage.dataType,
                     baseData: { message: logMessage.message }
                 };
@@ -249,12 +249,12 @@ export class AppInsightsCore implements IAppInsightsCore {
             throw Error("telemetry name required");
         }
 
-        if (CoreUtils.isNullOrUndefined(telemetryItem.timestamp)) {
+        if (CoreUtils.isNullOrUndefined(telemetryItem.time)) {
             this._notifiyInvalidEvent(telemetryItem);
             throw Error("telemetry timestamp required");
         }
 
-        if (CoreUtils.isNullOrUndefined(telemetryItem.iKey)) {
+        if (CoreUtils.isNullOrUndefined(telemetryItem.ikey)) {
             this._notifiyInvalidEvent(telemetryItem);
             throw Error("telemetry instrumentationKey required");
         }

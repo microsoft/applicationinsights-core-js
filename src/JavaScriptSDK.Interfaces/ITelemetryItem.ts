@@ -7,6 +7,11 @@
  */
 export interface ITelemetryItem {
     /**
+     * CommonSchema Version of this SDK
+     */
+    ver?: string;
+
+    /**
      * Unique name of the telemetry item
      */
     name: string;
@@ -14,12 +19,12 @@ export interface ITelemetryItem {
     /**
      * Timestamp when item was sent
      */
-    timestamp?: Date;
+    time?: Date;
 
     /**
      * Identifier of the resource that uniquely identifies which resource data is sent to
      */
-    iKey?: string;
+    ikey?: string;
 
     /**
      * System context properties of the telemetry item, example: ip address, city etc
@@ -41,11 +46,6 @@ export interface ITelemetryItem {
      * Based on schema for part B
      */
     baseData?: { [key: string]: any };
-
-    /**
-     * CommonSchema Version of this SDK
-     */
-    ver?: number;
 
 }
 
