@@ -124,7 +124,7 @@ export class ApplicationInsightsCoreTests extends TestClass {
             name: 'ApplicationInsightsCore: track adds required default fields if missing',
             test: () => {
                 const expectedIKey: string = "09465199-12AA-4124-817F-544738CC7C41";
-                const expectedTimestamp = new Date();
+                const expectedTimestamp = new Date().toISOString();
                 const expectedBaseType = "EventData";
 
                 const channelPlugin = new ChannelPlugin();

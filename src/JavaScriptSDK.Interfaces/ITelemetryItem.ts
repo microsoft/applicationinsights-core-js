@@ -19,7 +19,7 @@ export interface ITelemetryItem {
     /**
      * Timestamp when item was sent
      */
-    time?: Date;
+    time?: string;
 
     /**
      * Identifier of the resource that uniquely identifies which resource data is sent to

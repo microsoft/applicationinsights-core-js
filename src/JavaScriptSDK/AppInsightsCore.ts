@@ -175,7 +175,7 @@ export class AppInsightsCore implements IAppInsightsCore {
         }
         if (!telemetryItem.time) {
             // add default timestamp if not passed in
-            telemetryItem.time = new Date();
+            telemetryItem.time = new Date().toISOString();
         }
         if (CoreUtils.isNullOrUndefined(telemetryItem.ver)) {
             // CommonSchema 4.0
@@ -231,7 +231,7 @@ export class AppInsightsCore implements IAppInsightsCore {
                 const item: ITelemetryItem = {
                     name: "InternalMessageId: " + logMessage.messageId,
                     ikey: this.config.instrumentationKey,
-                    time: new Date(),
+                    time: new Date().toISOString(),
                     baseType: _InternalLogMessage.dataType,
                     baseData: { message: logMessage.message }
                 };
