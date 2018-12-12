@@ -1,5 +1,8 @@
 import { ApplicationInsightsCoreTests } from "./ApplicationInsightsCore.Tests";
-
-export function runTests() {
+var runTests = function() {
     new ApplicationInsightsCoreTests().registerTests();
 }
+
+runTests();
+
+export { runTests };

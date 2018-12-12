@@ -17,3 +17,6 @@ types
 *.nupkg
 
 statistics.html
+
+**/aitests.js*
+**/*.tgz

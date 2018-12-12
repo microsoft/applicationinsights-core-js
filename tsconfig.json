@@ -21,7 +21,12 @@
     "./src/applicationinsights-core-js.ts",
     "./src/JavaScriptSDK/**",
     "./src/JavaScriptSDK.Enums/**",
-    "./src/JavaScriptSDK.Interfaces/**"
+    "./src/JavaScriptSDK.Interfaces/**",
+    "./src/JavaScriptSDK.Tests/Selenium/ApplicationInsightsCore.Tests.ts",
+    "./src/JavaScriptSDK.Tests/Selenium/aitests.ts",
+    "./src/JavaScriptSDK.Tests/External/**",
+    "./src/JavaScriptSDK.Tests/TestFramework/**",
+    "./src/JavaScriptSDK.Tests/External"
   ],
   "exclude": ["node_modules/"]
 }

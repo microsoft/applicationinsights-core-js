@@ -1,13 +1,9 @@
-/// <reference path="../TestFramework/Common.ts" />
-/// <reference path="../../JavaScriptSDK/AppInsightsCore.ts" />
-/// <reference path="../../applicationinsights-core-js.ts" />
-
 import { IConfiguration, ITelemetryPlugin, ITelemetryItem, IPlugin, CoreUtils } from "../../applicationinsights-core-js"
 import { AppInsightsCore } from "../../JavaScriptSDK/AppInsightsCore";
 import { IChannelControls } from "../../JavaScriptSDK.Interfaces/IChannelControls";
 import { _InternalMessageId, LoggingSeverity } from "../../JavaScriptSDK.Enums/LoggingEnums";
 import { _InternalLogMessage, DiagnosticLogger } from "../../JavaScriptSDK/DiagnosticLogger";
-
+import { TestClass, Assert } from "../TestFramework/Common";
 export class ApplicationInsightsCoreTests extends TestClass {
 
     public testInitialize() {
@@ -25,12 +21,12 @@ export class ApplicationInsightsCoreTests extends TestClass {
             test: () => {
 
                 let samplingPlugin = new TestSamplingPlugin();
-                                
+
                 let appInsightsCore = new AppInsightsCore();
-                try {                    
+                try {
                     appInsightsCore.initialize(null, [samplingPlugin]);
                 } catch (error) {
-                    Assert.ok(true, "Validates configuration");                    
+                    Assert.ok(true, "Validates configuration");
                 }
 
                 let config2 : IConfiguration = {
@@ -39,17 +35,17 @@ export class ApplicationInsightsCoreTests extends TestClass {
                         extensionConfig: {}
                 };
 
-                try {                    
+                try {
                     appInsightsCore.initialize(config2, null);
                 } catch (error) {
-                    Assert.ok(true, "Validates extensions are provided");                    
+                    Assert.ok(true, "Validates extensions are provided");
                 }
                 let config : IConfiguration = {
                     endpointUrl: "https://dc.services.visualstudio.com/v2/track",
                     instrumentationKey: "",
                     extensionConfig: {}
                 };
-                try {                    
+                try {
                     appInsightsCore.initialize(config, [samplingPlugin]);
                 } catch (error) {
                     Assert.ok(true, "Validates instrumentationKey");
@@ -70,7 +66,7 @@ export class ApplicationInsightsCoreTests extends TestClass {
 
                 let appInsightsCore = new AppInsightsCore();
                 appInsightsCore.initialize(
-                    {instrumentationKey: "09465199-12AA-4124-817F-544738CC7C41"}, 
+                    {instrumentationKey: "09465199-12AA-4124-817F-544738CC7C41"},
                     [samplingPlugin, channelPlugin]);
                 Assert.ok(!!samplingPlugin.nexttPlugin, "setup prior to pipeline initialization");
             }
@@ -92,7 +88,7 @@ export class ApplicationInsightsCoreTests extends TestClass {
                 let appInsightsCore = new AppInsightsCore();
                 try {
                 appInsightsCore.initialize(
-                    {instrumentationKey: "09465199-12AA-4124-817F-544738CC7C41"}, 
+                    {instrumentationKey: "09465199-12AA-4124-817F-544738CC7C41"},
                     [samplingPlugin, samplingPlugin1, channelPlugin]);
 
                 Assert.ok("No error on dupicate priority");
@@ -108,9 +104,9 @@ export class ApplicationInsightsCoreTests extends TestClass {
                 let channelPlugin = new ChannelPlugin();
                 let appInsightsCore = new AppInsightsCore();
                 appInsightsCore.initialize(
-                    {instrumentationKey: "09465199-12AA-4124-817F-544738CC7C41"}, 
+                    {instrumentationKey: "09465199-12AA-4124-817F-544738CC7C41"},
                     [channelPlugin]);
-                
+
                 Assert.ok(!channelPlugin.isFlushInvoked, "Flush not called on initialize");
                 appInsightsCore.getTransmissionControls().forEach(queues => {
                     queues.forEach(q => q.flush(true));
@@ -441,7 +437,7 @@ class TestSamplingPlugin implements ITelemetryPlugin {
 
     private _start(config: IConfiguration) {
         if (!config) {
-            throw Error("required configuration missing");            
+            throw Error("required configuration missing");
         }
 
         let pluginConfig = config.extensions ? config.extensions[this.identifier] : null;
@@ -465,8 +461,8 @@ class ChannelPlugin implements IChannelControls {
     }
     public pause(): void {
         this.isPauseInvoked = true;
-    }    
-    
+    }
+
     public resume(): void {
         this.isResumeInvoked = true;
     }
@@ -485,7 +481,7 @@ class ChannelPlugin implements IChannelControls {
     public processTelemetry;
 
     public identifier = "Sender";
-    
+
     setNextPlugin(next: ITelemetryPlugin) {
         this._nextPlugin = next;
     }

@@ -15,3 +15,6 @@
 !/src/JavaScriptSDK.Enums/**
 !/src/JavaScriptSDK.Interfaces/**
 !/src/JavaScriptSDK/**
+
+# Ignore tests
+**/JavaScriptSDK.Tests/**

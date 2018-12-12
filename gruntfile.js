@@ -24,12 +24,11 @@ module.exports = function (grunt) {
                 tsconfig: './tsconfig.json'
             },
             coretest: {
-                tsconfig: './src/JavaScriptSDK.Tests/tsconfig.json',
+                tsconfig: './tsconfig.json',
                 src: [
                     './src/JavaScriptSDK.Tests/Selenium/ApplicationInsightsCore.Tests.ts',
                     './src/JavaScriptSDK.Tests/Selenium/aitests.ts'
-                ],
-                out: './src/JavaScriptSDK.Tests/Selenium/aicore.tests.js'
+                ]
             }
         },
         qunit: {

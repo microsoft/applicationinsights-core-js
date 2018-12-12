@@ -1,7 +1,7 @@
 /// <reference path="../External/qunit.d.ts" />
-/// <reference path="TestClass.ts" />
-
-class PollingAssert {
+import { Assert } from "./Assert";
+import { TestClass } from "./TestClass";
+export class PollingAssert {
     /**
     * Starts polling assertion function for a period of time after which it's considered failed.
     * @param {() => boolean} assertionFunctionReturnsBoolean - funciton returning true if condition passes and false if condition fails. Assertion will be done on this function's result.

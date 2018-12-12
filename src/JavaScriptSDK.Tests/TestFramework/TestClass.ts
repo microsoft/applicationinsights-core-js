@@ -1,9 +1,8 @@
 /// <reference path="../External/sinon.d.ts" />
 /// <reference path="../External/qunit.d.ts" />
-/// <reference path="Assert.ts" />
-/// <reference path="./TestCase.ts"/>
-
-class TestClass {
+import { TestCase, TestCaseAsync } from "./TestCase";
+import { Assert } from "./Assert";
+export class TestClass {
 
     constructor(name?: string) {
         QUnit.module(name);
@@ -62,7 +61,7 @@ class TestClass {
                     if (steps.length) {
                         var step = steps.shift();
 
-                        // The callback which activates the next test step. 
+                        // The callback which activates the next test step.
                         var nextTestStepTrigger = () => {
                             setTimeout(() => {
                                 trigger();
@@ -141,7 +140,7 @@ class TestClass {
         };
 
         // Register the test with QUnit
-        test(testInfo.name, testMethod);
+        QUnit.test(testInfo.name, testMethod);
     }
 
     /** Called when the test is starting. */
