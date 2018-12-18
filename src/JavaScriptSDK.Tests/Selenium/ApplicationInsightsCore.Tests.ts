@@ -21,7 +21,6 @@ export class ApplicationInsightsCoreTests extends TestClass {
             test: () => {
 
                 let samplingPlugin = new TestSamplingPlugin();
-
                 let appInsightsCore = new AppInsightsCore();
                 try {
                     appInsightsCore.initialize(null, [samplingPlugin]);

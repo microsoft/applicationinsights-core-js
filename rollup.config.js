@@ -91,7 +91,7 @@ const tests = () => {
   const nodeRollupConfig = {
     input: `dist-esm/JavaScriptSDK.Tests/Selenium/aitests.js`,
     output: {
-      file: `test/aitests.js`,
+      file: `src/JavaScriptSDK.Tests/Selenium/aitests.js`,
       format: "umd",
       name: "tests",
       sourcemap: true
