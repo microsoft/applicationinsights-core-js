@@ -45,7 +45,7 @@ export class AppInsightsCore implements IAppInsightsCore {
 
         this._notificationManager = new NotificationManager();
         this.config.extensions = CoreUtils.isNullOrUndefined(this.config.extensions) ? [] : this.config.extensions;
-        
+
         // add notification to the extensions in the config so other plugins can access it
         this.config.extensionConfig = CoreUtils.isNullOrUndefined(this.config.extensionConfig) ? {} : this.config.extensionConfig;
         this.config.extensionConfig.NotificationManager = this._notificationManager;
@@ -65,7 +65,7 @@ export class AppInsightsCore implements IAppInsightsCore {
             {
                 if (CoreUtils.isNullOrUndefined(item)) {
                     isValid = false;
-                }   
+                }
             });
 
             if (!isValid) {
@@ -108,7 +108,7 @@ export class AppInsightsCore implements IAppInsightsCore {
                 }
             }
         });
-        
+
         let c = -1;
         // Set next plugin for all until channel controller
         for (let idx = 0; idx < this._extensions.length - 1; idx++) {
@@ -128,7 +128,7 @@ export class AppInsightsCore implements IAppInsightsCore {
 
         // initialize channel controller first, this will initialize all channel plugins
         this._channelController.initialize(this.config, this, this._extensions);
-        
+
         // initialize remaining regular plugins
         this._extensions.forEach(ext => {
             let e = ext as ITelemetryPlugin;
@@ -163,21 +163,25 @@ export class AppInsightsCore implements IAppInsightsCore {
             this._notifiyInvalidEvent(telemetryItem);
             throw Error("Provide data.baseType for data.baseData");
         }
-        
+
         if (!telemetryItem.baseType) {
             // Hard coded from Common::Event.ts::Event.dataType
             telemetryItem.baseType = "EventData";
         }
 
-        if (!telemetryItem.instrumentationKey) {
+        if (!telemetryItem.ikey) {
             // setup default ikey if not passed in
-            telemetryItem.instrumentationKey = this.config.instrumentationKey;
+            telemetryItem.ikey = this.config.instrumentationKey;
         }
-        if (!telemetryItem.timestamp) {
+        if (!telemetryItem.time) {
             // add default timestamp if not passed in
-            telemetryItem.timestamp = new Date();
+            telemetryItem.time = new Date().toISOString();
         }
- 
+        if (CoreUtils.isNullOrUndefined(telemetryItem.ver)) {
+            // CommonSchema 4.0
+            telemetryItem.ver = "4.0";
+        }
+
         // do basic validation before sending it through the pipeline
         this._validateTelmetryItem(telemetryItem);
 
@@ -210,9 +214,9 @@ export class AppInsightsCore implements IAppInsightsCore {
     removeNotificationListener(listener: INotificationListener): void {
         this._notificationManager.removeNotificationListener(listener);
     }
-    
+
     /**
-     * Periodically check logger.queue for 
+     * Periodically check logger.queue for
      */
     pollInternalLogs(): number {
         let interval = this.config.diagnosticLogInterval;
@@ -226,8 +230,8 @@ export class AppInsightsCore implements IAppInsightsCore {
             queue.forEach((logMessage: _InternalLogMessage) => {
                 const item: ITelemetryItem = {
                     name: "InternalMessageId: " + logMessage.messageId,
-                    instrumentationKey: this.config.instrumentationKey,
-                    timestamp: new Date(),
+                    ikey: this.config.instrumentationKey,
+                    time: new Date().toISOString(),
                     baseType: _InternalLogMessage.dataType,
                     baseData: { message: logMessage.message }
                 };
@@ -245,12 +249,12 @@ export class AppInsightsCore implements IAppInsightsCore {
             throw Error("telemetry name required");
         }
 
-        if (CoreUtils.isNullOrUndefined(telemetryItem.timestamp)) {
+        if (CoreUtils.isNullOrUndefined(telemetryItem.time)) {
             this._notifiyInvalidEvent(telemetryItem);
             throw Error("telemetry timestamp required");
         }
 
-        if (CoreUtils.isNullOrUndefined(telemetryItem.instrumentationKey)) {
+        if (CoreUtils.isNullOrUndefined(telemetryItem.ikey)) {
             this._notifiyInvalidEvent(telemetryItem);
             throw Error("telemetry instrumentationKey required");
         }
@@ -264,7 +268,7 @@ export class AppInsightsCore implements IAppInsightsCore {
 class ChannelController implements ITelemetryPlugin {
 
     private channelQueue: Array<IChannelControls[]>;
-    
+
     public processTelemetry (item: ITelemetryItem) {
         this.channelQueue.forEach(queues => {
             // pass on to first item in queue
@@ -292,7 +296,7 @@ class ChannelController implements ITelemetryPlugin {
                     queue = queue.sort((a,b) => { // sort based on priority within each queue
                         return a.priority - b.priority;
                     });
-                    
+
                     // Initialize each plugin
                     queue.forEach(queueItem => queueItem.initialize(config, core, extensions));
 
@@ -321,7 +325,7 @@ class ChannelController implements ITelemetryPlugin {
 
                 // Initialize each plugin
                 arr.forEach(queueItem => queueItem.initialize(config, core, extensions));
-                
+
                 // setup next plugin
                 for (let i = 1; i < arr.length; i++) {
                     arr[i - 1].setNextPlugin(arr[i]);
@@ -333,6 +337,6 @@ class ChannelController implements ITelemetryPlugin {
     }
 }
 
-const validationError = "Extensions must provide callback to initialize";    
+const validationError = "Extensions must provide callback to initialize";
 const ChannelControllerPriority = 200;
 const duplicatePriority = "One or more extensions are set at same priority";
