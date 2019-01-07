@@ -1,7 +1,7 @@
 {
     "name": "@microsoft/applicationinsights-core-js",
     "author": "Microsoft Corporation",
-    "version": "1.0.0-beta.3",
+    "version": "1.0.0-beta.4",
     "description": "Microsoft Application Insights Core Javascript SDK",
     "keywords": [
         "azure",
@@ -35,7 +35,6 @@
         "rollup-plugin-node-resolve": "^3.4.0",
         "rollup-plugin-replace": "^2.1.0",
         "rollup-plugin-uglify": "^6.0.0",
-        "rollup-plugin-visualizer": "^0.9.2",
         "tslint": "^5.11.0",
         "tslint-microsoft-contrib": "^5.2.1",
         "typescript": "2.5.3"
