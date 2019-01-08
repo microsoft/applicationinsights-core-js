@@ -140,7 +140,7 @@ export class ApplicationInsightsCoreTests extends TestClass {
                 // Test
                 Assert.ok(validateStub.calledOnce, "validateTelemetryItem called");
                 const newItem: ITelemetryItem = validateStub.args[0][0];
-                Assert.equal(expectedIKey, newItem.ikey, "Instrumentation key is added");
+                Assert.equal(expectedIKey, newItem.iKey, "Instrumentation key is added");
                 Assert.equal(expectedBaseType, newItem.baseType, "BaseType is added");
                 Assert.deepEqual(expectedTimestamp, newItem.time, "Timestamp is added");
             }

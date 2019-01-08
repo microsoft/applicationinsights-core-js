@@ -24,7 +24,7 @@ export interface ITelemetryItem {
     /**
      * Identifier of the resource that uniquely identifies which resource data is sent to
      */
-    ikey?: string;
+    iKey?: string;
 
     /**
      * System context properties of the telemetry item, example: ip address, city etc
