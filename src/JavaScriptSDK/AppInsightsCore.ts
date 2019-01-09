@@ -169,9 +169,9 @@ export class AppInsightsCore implements IAppInsightsCore {
             telemetryItem.baseType = "EventData";
         }
 
-        if (!telemetryItem.ikey) {
-            // setup default ikey if not passed in
-            telemetryItem.ikey = this.config.instrumentationKey;
+        if (!telemetryItem.iKey) {
+            // setup default iKey if not passed in
+            telemetryItem.iKey = this.config.instrumentationKey;
         }
         if (!telemetryItem.time) {
             // add default timestamp if not passed in
@@ -230,7 +230,7 @@ export class AppInsightsCore implements IAppInsightsCore {
             queue.forEach((logMessage: _InternalLogMessage) => {
                 const item: ITelemetryItem = {
                     name: "InternalMessageId: " + logMessage.messageId,
-                    ikey: this.config.instrumentationKey,
+                    iKey: this.config.instrumentationKey,
                     time: new Date().toISOString(),
                     baseType: _InternalLogMessage.dataType,
                     baseData: { message: logMessage.message }
@@ -254,7 +254,7 @@ export class AppInsightsCore implements IAppInsightsCore {
             throw Error("telemetry timestamp required");
         }
 
-        if (CoreUtils.isNullOrUndefined(telemetryItem.ikey)) {
+        if (CoreUtils.isNullOrUndefined(telemetryItem.iKey)) {
             this._notifiyInvalidEvent(telemetryItem);
             throw Error("telemetry instrumentationKey required");
         }
