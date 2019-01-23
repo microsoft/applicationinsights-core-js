@@ -414,6 +414,37 @@ export class ApplicationInsightsCoreTests extends TestClass {
                     Assert.ok(channelControls[0][2] === channelPlugin3);
             }
         });
+
+        this.testCase({
+            name: 'ApplicationInsightsCore: Validates root level properties in telemetry item',
+            test: () => {
+                const expectedIKey: string = "09465199-12AA-4124-817F-544738CC7C41";
+
+                let channelPlugin = new ChannelPlugin();
+                channelPlugin.priority = 201;
+                let samplingPlugin = new TestSamplingPlugin(true);
+                const appInsightsCore = new AppInsightsCore();
+                appInsightsCore.initialize({instrumentationKey: expectedIKey}, [samplingPlugin, channelPlugin]);
+
+                // Act
+                let bareItem: ITelemetryItem = {
+                    name: 'test item',
+                    ext: {
+                        "user": { "id": "test" }
+                    }, 
+                    tags: [ { "device.id": "AABA40BC-EB0D-44A7-96F5-ED2103E47AE9"} ],
+                    data: {
+                        "custom data": {
+                            "data1": "value1"
+                        }
+                    },
+                    baseType: "PageviewData",
+                    baseData: { name: "Test Page"}
+                };
+
+                appInsightsCore.track(bareItem);
+            }
+        });
     }
 }
 
@@ -423,19 +454,30 @@ class TestSamplingPlugin implements ITelemetryPlugin {
     public identifier: string = "AzureSamplingPlugin";
     public setNextPlugin: (next: ITelemetryPlugin) => void;
     public priority: number = 5;
-    private samplingPercentage;
     public nexttPlugin: ITelemetryPlugin;
+    private samplingPercentage;
+    private _validateItem = false;
+    
 
 
-    constructor() {
+    constructor(validateItem: boolean = false) {
         this.processTelemetry = this._processTelemetry.bind(this);
         this.initialize = this._start.bind(this);
         this.setNextPlugin = this._setNextPlugin.bind(this);
+        this._validateItem = validateItem;
     }
 
     private _processTelemetry(env: ITelemetryItem) {
         if (!env) {
             throw Error("Invalid telemetry object");
+        }
+
+        if (this._validateItem) {
+            Assert.ok(env.baseData);
+            Assert.ok(env.baseType);
+            Assert.ok(env.data);
+            Assert.ok(env.ext);
+            Assert.ok(env.tags);
         }
     }
 
@@ -507,5 +549,4 @@ class TestPlugin implements IPlugin {
         this._config = config;
         // do custom one time initialization
     }
-
 }
