@@ -64,7 +64,7 @@ export class ApplicationInsightsCoreTests extends TestClass {
                 samplingPlugin.priority = 20;
 
                 let channelPlugin = new ChannelPlugin();
-                channelPlugin.priority = 201;
+                channelPlugin.priority = 1001;
                 // Assert prior to initialize
                 Assert.ok(!samplingPlugin.nexttPlugin, "Not setup prior to pipeline initialization");
 
@@ -87,7 +87,7 @@ export class ApplicationInsightsCoreTests extends TestClass {
                 samplingPlugin1.priority = 20;
 
                 let channelPlugin = new ChannelPlugin();
-                channelPlugin.priority = 201;
+                channelPlugin.priority = 1001;
 
                 let appInsightsCore = new AppInsightsCore();
                 try {
@@ -304,7 +304,7 @@ export class ApplicationInsightsCoreTests extends TestClass {
                 samplingPlugin.priority = 20;
 
                 let channelPlugin = new ChannelPlugin();
-                channelPlugin.priority = 201;
+                channelPlugin.priority = 1001;
 
                 let appInsightsCore = new AppInsightsCore();
                 try {
@@ -335,7 +335,7 @@ export class ApplicationInsightsCoreTests extends TestClass {
                 let testPlugin = new TestPlugin();
 
                 let channelPlugin = new ChannelPlugin();
-                channelPlugin.priority = 201;
+                channelPlugin.priority = 1001;
 
                 let appInsightsCore = new AppInsightsCore();
                 try {
@@ -388,13 +388,13 @@ export class ApplicationInsightsCoreTests extends TestClass {
             name: 'ApplicationInsightsCore: user can add two channels in single queue',
             test: () => {
                 let channelPlugin1 = new ChannelPlugin();
-                channelPlugin1.priority = 201;
+                channelPlugin1.priority = 1001;
 
                 let channelPlugin2 = new ChannelPlugin();
-                channelPlugin2.priority = 202;
+                channelPlugin2.priority = 1002;
 
                 let channelPlugin3 = new ChannelPlugin();
-                channelPlugin3.priority = 203;
+                channelPlugin3.priority = 1003;
 
                 let appInsightsCore = new AppInsightsCore();
                 appInsightsCore.initialize(
@@ -421,7 +421,7 @@ export class ApplicationInsightsCoreTests extends TestClass {
                 const expectedIKey: string = "09465199-12AA-4124-817F-544738CC7C41";
 
                 let channelPlugin = new ChannelPlugin();
-                channelPlugin.priority = 201;
+                channelPlugin.priority = 1001;
                 let samplingPlugin = new TestSamplingPlugin(true);
                 const appInsightsCore = new AppInsightsCore();
                 appInsightsCore.initialize({instrumentationKey: expectedIKey}, [samplingPlugin, channelPlugin]);
@@ -532,7 +532,7 @@ class ChannelPlugin implements IChannelControls {
         this._nextPlugin = next;
     }
 
-    public priority: number = 201;
+    public priority: number = 1001;
 
     public initialize = (config: IConfiguration) => {
     }
