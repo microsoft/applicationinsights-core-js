@@ -8,6 +8,7 @@
     "target": "es5",
     "forceConsistentCasingInFileNames": true,
     "importHelpers": true,
+    "noEmitHelpers": true,
     "alwaysStrict": true,
     "declaration": true,
     "declarationMap": true,
