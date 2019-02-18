@@ -38,5 +38,8 @@
         "tslint": "^5.11.0",
         "tslint-microsoft-contrib": "^5.2.1",
         "typescript": "2.5.3"
+    },
+    "dependencies": {
+      "tslib": "^1.9.3"
     }
 }
