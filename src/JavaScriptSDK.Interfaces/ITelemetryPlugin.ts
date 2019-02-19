@@ -15,25 +15,31 @@ export interface ITelemetryPlugin extends IPlugin {
     */
     processTelemetry: (env: ITelemetryItem) => void;
 
+    
+    /**
+     * Set next extension for telemetry processing
+     */
+    setNextPlugin: (next: ITelemetryPlugin) => void;
+    
+    /**
+     * Priority of the extension
+     */
+    priority: number;
+}
+
+export interface IPlugin {
+    /**
+     * Initialize plugin loaded by SDK
+     */
+    initialize: (config: IConfiguration, core: IAppInsightsCore, extensions: IPlugin[]) => void;
+    
     /**
     * Extension name
     */
     identifier: string;
 
     /**
-    * Set next extension for telemetry processing
+    * Plugin version (available in ext.sdk.libVer in common schema)
     */
-    setNextPlugin: (next: ITelemetryPlugin) => void;
-
-    /**
-    * Priority of the extension
-    */
-    priority: number;
-}
-
-export interface IPlugin {
-    /**
-    * Initialize plugin loaded by SDK
-    */
-    initialize: (config: IConfiguration, core: IAppInsightsCore, extensions: IPlugin[]) => void;
+    version?: string;
 }

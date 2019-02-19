@@ -36,9 +36,10 @@ export interface ITelemetryItem {
      */
     tags?: Tags[];
 
-    data?: {
-        [key: string]: any;
-    },
+    /**
+     * Custom data
+     */
+    data?:ICustomProperties;
 
     /**
      * Telemetry type used for part B
@@ -54,4 +55,7 @@ export interface ITelemetryItem {
 
 export interface Tags {
     [key: string]: any;
+}
+
+export interface ICustomProperties {
 }

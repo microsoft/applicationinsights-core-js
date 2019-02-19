@@ -445,6 +445,44 @@ export class ApplicationInsightsCoreTests extends TestClass {
                 appInsightsCore.track(bareItem);
             }
         });
+
+        this.testCase({
+            name: 'SDK version is appended in common schema field for version',
+            test: () => {
+                const expectedIKey: string = "09465199-12AA-4124-817F-544738CC7C41";
+
+                let channelPlugin = new ChannelPlugin();
+                channelPlugin.priority = 1001;
+                let samplingPlugin = new TestSamplingPlugin(true);
+                const appInsightsCore = new AppInsightsCore();
+                appInsightsCore.initialize({instrumentationKey: expectedIKey}, [samplingPlugin, channelPlugin]);
+
+                // Act
+                let bareItem: ITelemetryItem = {
+                    name: 'test item',
+                    ext: {
+                        "user": { "id": "test" }
+                    }, 
+                    tags: [ { "device.id": "AABA40BC-EB0D-44A7-96F5-ED2103E47AE9"} ],
+                    data: {
+                        "custom data": {
+                            "data1": "value1"
+                        }
+                    },
+                    baseType: "PageviewData",
+                    baseData: { name: "Test Page"}
+                };
+
+                samplingPlugin.processTelemetry = (telemetryItem) => {
+                    Assert.ok(telemetryItem.ext.sdk);
+                    Assert.ok(telemetryItem.ext.sdk.libVer);
+                    Assert.ok(telemetryItem.ext.sdk.libVer.indexOf("AzureSamplingPlugin:1.0.31-Beta;") >= 0);
+                };
+
+                appInsightsCore.track(bareItem);
+            }
+        });
+
     }
 }
 
@@ -454,11 +492,10 @@ class TestSamplingPlugin implements ITelemetryPlugin {
     public identifier: string = "AzureSamplingPlugin";
     public setNextPlugin: (next: ITelemetryPlugin) => void;
     public priority: number = 5;
+    public version = "1.0.31-Beta";
     public nexttPlugin: ITelemetryPlugin;
     private samplingPercentage;
     private _validateItem = false;
-    
-
 
     constructor(validateItem: boolean = false) {
         this.processTelemetry = this._processTelemetry.bind(this);
@@ -501,6 +538,7 @@ class ChannelPlugin implements IChannelControls {
     public isTearDownInvoked = false;
     public isResumeInvoked = false;
     public isPauseInvoked = false;
+    public version: string = "1.0.33-Beta";
 
     constructor() {
         this.processTelemetry = this._processTelemetry.bind(this);
@@ -537,13 +575,15 @@ class ChannelPlugin implements IChannelControls {
     public initialize = (config: IConfiguration) => {
     }
 
-    private _processTelemetry(env: ITelemetryItem) {
+    public _processTelemetry(env: ITelemetryItem) {
 
     }
 }
 
 class TestPlugin implements IPlugin {
     private _config: IConfiguration;
+    public identifier: string = "TestPlugin";
+    public version: string = "1.0.31-Beta";
 
     public initialize(config: IConfiguration) {
         this._config = config;
