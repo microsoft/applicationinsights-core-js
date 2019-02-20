@@ -1,7 +1,7 @@
 {
     "name": "@microsoft/applicationinsights-core-js",
     "author": "Microsoft Corporation",
-    "version": "1.0.0-beta.5",
+    "version": "2.0.0-beta.0",
     "description": "Microsoft Application Insights Core Javascript SDK",
     "keywords": [
         "azure",
@@ -40,6 +40,6 @@
         "typescript": "2.5.3"
     },
     "dependencies": {
-      "tslib": "^1.9.3"
+        "tslib": "^1.9.3"
     }
 }

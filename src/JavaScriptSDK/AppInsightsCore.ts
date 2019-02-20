@@ -185,6 +185,8 @@ export class AppInsightsCore implements IAppInsightsCore {
         // do basic validation before sending it through the pipeline
         this._validateTelmetryItem(telemetryItem);
 
+        this._updateSdkVersion(telemetryItem);
+
         // invoke any common telemetry processors before sending through pipeline
         let i = 0;
         while (i < this._extensions.length) {
@@ -257,6 +259,30 @@ export class AppInsightsCore implements IAppInsightsCore {
         if (CoreUtils.isNullOrUndefined(telemetryItem.iKey)) {
             this._notifiyInvalidEvent(telemetryItem);
             throw Error("telemetry instrumentationKey required");
+        }
+    }
+
+    private _updateSdkVersion(telemetryItem: ITelemetryItem) {
+
+        if (!telemetryItem.ext) {
+            telemetryItem.ext = {};
+        }
+
+        if (!telemetryItem.ext.sdk) {
+            telemetryItem.ext.sdk = {};
+        }
+
+        let version = "";
+        for(let i = 0; i < this._extensions.length; i++ ) {
+            let ext = this._extensions[i];
+            if (ext.identifier && ext.version) {
+                let str = `${ext.identifier}:${ext.version};`;
+                version = version.concat(str);
+            }
+        }
+
+        if (version != "") {
+            telemetryItem.ext.sdk['libVer'] = version;
         }
     }
 
@@ -338,5 +364,5 @@ class ChannelController implements ITelemetryPlugin {
 }
 
 const validationError = "Extensions must provide callback to initialize";
-const ChannelControllerPriority = 200;
+const ChannelControllerPriority = 500;
 const duplicatePriority = "One or more extensions are set at same priority";

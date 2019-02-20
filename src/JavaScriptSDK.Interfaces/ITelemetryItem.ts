@@ -29,13 +29,17 @@ export interface ITelemetryItem {
     /**
      * System context properties of the telemetry item, example: ip address, city etc
      */
-    ctx?: {[key: string]: any};
+    ext?: {[key: string]: any};
 
+    /**
+     * System context property extensions that are not global (not in ctx)
+     */
     tags?: Tags[];
 
-    data?: {
-        [key: string]: any;
-    },
+    /**
+     * Custom data
+     */
+    data?:ICustomProperties;
 
     /**
      * Telemetry type used for part B
@@ -51,4 +55,7 @@ export interface ITelemetryItem {
 
 export interface Tags {
     [key: string]: any;
+}
+
+export interface ICustomProperties {
 }

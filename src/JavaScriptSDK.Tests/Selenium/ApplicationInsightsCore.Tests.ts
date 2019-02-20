@@ -64,7 +64,7 @@ export class ApplicationInsightsCoreTests extends TestClass {
                 samplingPlugin.priority = 20;
 
                 let channelPlugin = new ChannelPlugin();
-                channelPlugin.priority = 201;
+                channelPlugin.priority = 1001;
                 // Assert prior to initialize
                 Assert.ok(!samplingPlugin.nexttPlugin, "Not setup prior to pipeline initialization");
 
@@ -87,7 +87,7 @@ export class ApplicationInsightsCoreTests extends TestClass {
                 samplingPlugin1.priority = 20;
 
                 let channelPlugin = new ChannelPlugin();
-                channelPlugin.priority = 201;
+                channelPlugin.priority = 1001;
 
                 let appInsightsCore = new AppInsightsCore();
                 try {
@@ -304,7 +304,7 @@ export class ApplicationInsightsCoreTests extends TestClass {
                 samplingPlugin.priority = 20;
 
                 let channelPlugin = new ChannelPlugin();
-                channelPlugin.priority = 201;
+                channelPlugin.priority = 1001;
 
                 let appInsightsCore = new AppInsightsCore();
                 try {
@@ -335,7 +335,7 @@ export class ApplicationInsightsCoreTests extends TestClass {
                 let testPlugin = new TestPlugin();
 
                 let channelPlugin = new ChannelPlugin();
-                channelPlugin.priority = 201;
+                channelPlugin.priority = 1001;
 
                 let appInsightsCore = new AppInsightsCore();
                 try {
@@ -388,13 +388,13 @@ export class ApplicationInsightsCoreTests extends TestClass {
             name: 'ApplicationInsightsCore: user can add two channels in single queue',
             test: () => {
                 let channelPlugin1 = new ChannelPlugin();
-                channelPlugin1.priority = 201;
+                channelPlugin1.priority = 1001;
 
                 let channelPlugin2 = new ChannelPlugin();
-                channelPlugin2.priority = 202;
+                channelPlugin2.priority = 1002;
 
                 let channelPlugin3 = new ChannelPlugin();
-                channelPlugin3.priority = 203;
+                channelPlugin3.priority = 1003;
 
                 let appInsightsCore = new AppInsightsCore();
                 appInsightsCore.initialize(
@@ -414,6 +414,75 @@ export class ApplicationInsightsCoreTests extends TestClass {
                     Assert.ok(channelControls[0][2] === channelPlugin3);
             }
         });
+
+        this.testCase({
+            name: 'ApplicationInsightsCore: Validates root level properties in telemetry item',
+            test: () => {
+                const expectedIKey: string = "09465199-12AA-4124-817F-544738CC7C41";
+
+                let channelPlugin = new ChannelPlugin();
+                channelPlugin.priority = 1001;
+                let samplingPlugin = new TestSamplingPlugin(true);
+                const appInsightsCore = new AppInsightsCore();
+                appInsightsCore.initialize({instrumentationKey: expectedIKey}, [samplingPlugin, channelPlugin]);
+
+                // Act
+                let bareItem: ITelemetryItem = {
+                    name: 'test item',
+                    ext: {
+                        "user": { "id": "test" }
+                    }, 
+                    tags: [ { "device.id": "AABA40BC-EB0D-44A7-96F5-ED2103E47AE9"} ],
+                    data: {
+                        "custom data": {
+                            "data1": "value1"
+                        }
+                    },
+                    baseType: "PageviewData",
+                    baseData: { name: "Test Page"}
+                };
+
+                appInsightsCore.track(bareItem);
+            }
+        });
+
+        this.testCase({
+            name: 'SDK version is appended in common schema field for version',
+            test: () => {
+                const expectedIKey: string = "09465199-12AA-4124-817F-544738CC7C41";
+
+                let channelPlugin = new ChannelPlugin();
+                channelPlugin.priority = 1001;
+                let samplingPlugin = new TestSamplingPlugin(true);
+                const appInsightsCore = new AppInsightsCore();
+                appInsightsCore.initialize({instrumentationKey: expectedIKey}, [samplingPlugin, channelPlugin]);
+
+                // Act
+                let bareItem: ITelemetryItem = {
+                    name: 'test item',
+                    ext: {
+                        "user": { "id": "test" }
+                    }, 
+                    tags: [ { "device.id": "AABA40BC-EB0D-44A7-96F5-ED2103E47AE9"} ],
+                    data: {
+                        "custom data": {
+                            "data1": "value1"
+                        }
+                    },
+                    baseType: "PageviewData",
+                    baseData: { name: "Test Page"}
+                };
+
+                samplingPlugin.processTelemetry = (telemetryItem) => {
+                    Assert.ok(telemetryItem.ext.sdk);
+                    Assert.ok(telemetryItem.ext.sdk.libVer);
+                    Assert.ok(telemetryItem.ext.sdk.libVer.indexOf("AzureSamplingPlugin:1.0.31-Beta;") >= 0);
+                };
+
+                appInsightsCore.track(bareItem);
+            }
+        });
+
     }
 }
 
@@ -423,19 +492,29 @@ class TestSamplingPlugin implements ITelemetryPlugin {
     public identifier: string = "AzureSamplingPlugin";
     public setNextPlugin: (next: ITelemetryPlugin) => void;
     public priority: number = 5;
-    private samplingPercentage;
+    public version = "1.0.31-Beta";
     public nexttPlugin: ITelemetryPlugin;
+    private samplingPercentage;
+    private _validateItem = false;
 
-
-    constructor() {
+    constructor(validateItem: boolean = false) {
         this.processTelemetry = this._processTelemetry.bind(this);
         this.initialize = this._start.bind(this);
         this.setNextPlugin = this._setNextPlugin.bind(this);
+        this._validateItem = validateItem;
     }
 
     private _processTelemetry(env: ITelemetryItem) {
         if (!env) {
             throw Error("Invalid telemetry object");
+        }
+
+        if (this._validateItem) {
+            Assert.ok(env.baseData);
+            Assert.ok(env.baseType);
+            Assert.ok(env.data);
+            Assert.ok(env.ext);
+            Assert.ok(env.tags);
         }
     }
 
@@ -459,6 +538,7 @@ class ChannelPlugin implements IChannelControls {
     public isTearDownInvoked = false;
     public isResumeInvoked = false;
     public isPauseInvoked = false;
+    public version: string = "1.0.33-Beta";
 
     constructor() {
         this.processTelemetry = this._processTelemetry.bind(this);
@@ -490,22 +570,23 @@ class ChannelPlugin implements IChannelControls {
         this._nextPlugin = next;
     }
 
-    public priority: number = 201;
+    public priority: number = 1001;
 
     public initialize = (config: IConfiguration) => {
     }
 
-    private _processTelemetry(env: ITelemetryItem) {
+    public _processTelemetry(env: ITelemetryItem) {
 
     }
 }
 
 class TestPlugin implements IPlugin {
     private _config: IConfiguration;
+    public identifier: string = "TestPlugin";
+    public version: string = "1.0.31-Beta";
 
     public initialize(config: IConfiguration) {
         this._config = config;
         // do custom one time initialization
     }
-
 }
