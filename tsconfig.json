@@ -20,9 +20,9 @@
   },
   "include": [
     "./src/applicationinsights-core-js.ts",
-    "./src/JavaScriptSDK/**",
-    "./src/JavaScriptSDK.Enums/**",
-    "./src/JavaScriptSDK.Interfaces/**"
+    "./src/JavaScriptSDK/**/*.ts",
+    "./src/JavaScriptSDK.Enums/**/*.ts",
+    "./src/JavaScriptSDK.Interfaces/**/*.ts"
   ],
   "exclude": ["node_modules/"]
 }
