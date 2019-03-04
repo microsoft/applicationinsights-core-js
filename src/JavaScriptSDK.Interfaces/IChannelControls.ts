@@ -32,4 +32,4 @@ export interface IChannelControls extends ITelemetryPlugin {
     flush(async: boolean, callBack?: () => void): void;
 }
 
-export const MinChannelPriorty: number = 100;
+export const MinChannelPriorty: number = 501;
