@@ -1,5 +1,5 @@
-> ***Important:*** This repo is no longer active and marked "Archived".
-If you are looking to add Application Insights to your website/app, please see the [applicationinsights-web](https://github.com/Microsoft/ApplicationInsights-JS/tree/master/vNext/AISKU#application-insights-javascript-sdk-beta-sdk) repository to learn how to get started.
+***Important:*** This repo is no longer active and marked "Archived".
+If you are looking to add Application Insights to your website/app, please see the [Applicationinsights-JS](https://github.com/microsoft/ApplicationInsights-JS) repository to learn how to get started.
 
 # Microsoft Application Insights JavaScript SDK - Core
 
